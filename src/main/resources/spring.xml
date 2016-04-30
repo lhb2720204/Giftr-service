@@ -8,4 +8,8 @@
         <property name="username" value="${mysql.user}"/>
         <property name="password" value="${mysql.password"/>
     </bean>
+
+    <bean id="userDAO" class="com.akhahaha.giftr.service.data.dao.UserDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 </beans>

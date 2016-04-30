@@ -16,6 +16,30 @@ public class User {
     private GiftType giftType;
     private String interests;
 
+    /**
+     * Creates a new User with default properties.
+     */
+    public User() {
+        status = UserStatus.ACTIVE;
+        Date currentDate = new Date();
+        joinDate = currentDate;
+        lastActive = currentDate;
+        gender = Gender.UNKNOWN;
+        giftType = GiftType.UNKNOWN;
+    }
+
+    public User(Integer id, UserStatus status, Date joinDate, Date lastActive, Gender gender, String location,
+                GiftType giftType, String interests) {
+        this.id = id;
+        this.status = status;
+        this.joinDate = joinDate;
+        this.lastActive = lastActive;
+        this.gender = gender;
+        this.location = location;
+        this.giftType = giftType;
+        this.interests = interests;
+    }
+
     public Integer getId() {
         return id;
     }
