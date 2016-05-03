@@ -9,6 +9,11 @@
         <property name="password" value="${mysql.password"/>
     </bean>
 
+    <bean id="catalogClient" class="com.akhahaha.shopzilla.catalog.client.CatalogClientImpl">
+        <property name="publisherID" value="${catalog.pubID}"/>
+        <property name="apiKey" value="${catalog.apiKey}"/>
+    </bean>
+
     <bean id="userDAO" class="com.akhahaha.giftr.service.data.dao.UserDAOImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
@@ -17,8 +22,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="catalogClient" class="com.akhahaha.shopzilla.catalog.client.CatalogClientImpl">
-        <property name="publisherID" value="${catalog.pubID}"/>
-        <property name="apiKey" value="${catalog.apiKey}"/>
+    <bean id="productDAO" class="com.akhahaha.giftr.service.data.dao.ProductDAOImpl">
+        <property name="catalogClient" ref="catalogClient"/>
     </bean>
 </beans>
