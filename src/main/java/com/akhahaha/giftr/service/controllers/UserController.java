@@ -109,6 +109,29 @@ public class UserController {
         return new ResponseEntity<>(user, headers, HttpStatus.OK);
     }
 
+    /**
+     * Returns matches involving the specified User
+     */
+    @RequestMapping(value = "/{userID}/matches", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getUserMatches(
+            @PathVariable("userID") Integer userID) {
+        // TODO Validate authorization
+
+        User user = userDAO.getUser(userID);
+        if (user == null) {
+            throw new UserNotFoundException(userID);
+        }
+
+        List<Match> matches = matchDAO.findMatchesByUser(userID);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand().toUri());
+        return new ResponseEntity<>(matches, headers, HttpStatus.OK);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private class UserNotFoundException extends RuntimeException {
         UserNotFoundException(Integer userID) {

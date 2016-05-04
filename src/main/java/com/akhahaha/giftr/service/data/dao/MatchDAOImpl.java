@@ -2,7 +2,6 @@ package com.akhahaha.giftr.service.data.dao;
 
 import com.akhahaha.giftr.service.data.models.Match;
 import com.akhahaha.giftr.service.data.models.MatchStatus;
-import com.akhahaha.giftr.service.data.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
@@ -35,8 +34,8 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setInt(1, match.getStatus().getId());
             ps.setDate(2, new Date(match.getCreated().getTime()));
             ps.setDate(3, new Date(match.getLastModified().getTime()));
-            ps.setInt(4, match.getUser1().getId());
-            ps.setInt(5, match.getUser2().getId());
+            ps.setInt(4, match.getUser1ID());
+            ps.setInt(5, match.getUser2ID());
             ps.setString(6, match.getUser1Transaction());
             ps.setString(7, match.getUser2Transaction());
             ps.executeUpdate();
@@ -67,21 +66,18 @@ public class MatchDAOImpl implements MatchDAO {
 
     @Override
     public void updateMatch(Match match) {
-        String sql = "UPDATE `Match` SET status = ?, created = ?, lastModified = ?, user1 = ?, user2 = ?," +
-                "user1Transaction = ?, user2Transaction = ? WHERE id = ?";
+        String sql = "UPDATE `Match` SET status = ?, lastModified = ?, user1Transaction = ?, user2Transaction = ? " +
+                "WHERE id = ?";
 
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, match.getStatus().getId());
-            ps.setDate(2, new Date(match.getCreated().getTime()));
-            ps.setDate(3, new Date(match.getLastModified().getTime()));
-            ps.setInt(4, match.getUser1().getId());
-            ps.setInt(5, match.getUser2().getId());
-            ps.setString(6, match.getUser1Transaction());
-            ps.setString(7, match.getUser2Transaction());
-            ps.setInt(8, match.getId());
+            ps.setDate(2, new Date(new java.util.Date().getTime()));
+            ps.setString(3, match.getUser1Transaction());
+            ps.setString(4, match.getUser2Transaction());
+            ps.setInt(5, match.getId());
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -98,7 +94,7 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
-    public Match findMatchByID(Integer matchID) {
+    public Match getMatch(Integer matchID) {
         String sql = "SELECT * FROM `Match` WHERE id = ?";
 
         Connection connection = null;
@@ -112,11 +108,11 @@ public class MatchDAOImpl implements MatchDAO {
                 UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
                 match = new Match(
                         rs.getInt("id"),
-                        findMatchStatusByID(rs.getInt("status")),
+                        getMatchStatus(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
-                        userDAO.getUser(rs.getInt("user1")),
-                        userDAO.getUser(rs.getInt("user2")),
+                        rs.getInt("user1"),
+                        rs.getInt("user2"),
                         rs.getString("user1Transaction"),
                         rs.getString("user2Transaction"));
             }
@@ -140,26 +136,67 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
-    public List<Match> findMatchesByUser(User user) {
+    public List<Match> getAllMatches() {
+        String sql = "SELECT * FROM `Match`";
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            List<Match> matches = new ArrayList<>();
+            ResultSet rs = ps.executeQuery();
+            UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
+            while (rs.next()) {
+                matches.add(new Match(
+                        rs.getInt("id"),
+                        getMatchStatus(rs.getInt("status")),
+                        rs.getDate("created"),
+                        rs.getDate("lastModified"),
+                        rs.getInt("user1"),
+                        rs.getInt("user2"),
+                        rs.getString("user1Transaction"),
+                        rs.getString("user2Transaction")));
+            }
+
+            rs.close();
+            ps.close();
+            return matches;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Match> findMatchesByUser(Integer userID) {
         String sql = "SELECT * FROM `Match` WHERE user1 = ? OR user2 = ?";
 
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, user.getId());
-            ps.setInt(2, user.getId());
+            ps.setInt(1, userID);
+            ps.setInt(2, userID);
             List<Match> matches = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
             while (rs.next()) {
                 matches.add(new Match(
                         rs.getInt("id"),
-                        findMatchStatusByID(rs.getInt("status")),
+                        getMatchStatus(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
-                        userDAO.getUser(rs.getInt("user1")),
-                        userDAO.getUser(rs.getInt("user2")),
+                        rs.getInt("user1"),
+                        rs.getInt("user2"),
                         rs.getString("user1Transaction"),
                         rs.getString("user2Transaction")));
             }
@@ -183,28 +220,28 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
-    public List<Match> findMatchesByUserPair(User user1, User user2) {
+    public List<Match> findMatchesByUserPair(Integer userID1, Integer userID2) {
         String sql = "SELECT * FROM `Match` WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)";
 
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, user1.getId());
-            ps.setInt(2, user2.getId());
-            ps.setInt(3, user2.getId());
-            ps.setInt(4, user1.getId());
+            ps.setInt(1, userID1);
+            ps.setInt(2, userID2);
+            ps.setInt(3, userID2);
+            ps.setInt(4, userID1);
             List<Match> matches = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
             while (rs.next()) {
                 matches.add(new Match(
                         rs.getInt("id"),
-                        findMatchStatusByID(rs.getInt("status")),
+                        getMatchStatus(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
-                        userDAO.getUser(rs.getInt("user1")),
-                        userDAO.getUser(rs.getInt("user2")),
+                        rs.getInt("user1"),
+                        rs.getInt("user2"),
                         rs.getString("user1Transaction"),
                         rs.getString("user2Transaction")));
             }
@@ -228,7 +265,7 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
-    public MatchStatus findMatchStatusByID(Integer matchStatusID) {
+    public MatchStatus getMatchStatus(Integer matchStatusID) {
         String sql = "SELECT * FROM MatchStatus WHERE id = ?";
 
         Connection connection = null;

@@ -11,28 +11,31 @@ public class Match {
     private MatchStatus status;
     private Date created;
     private Date lastModified;
-    private User user1;
-    private User user2;
+    private Integer user1ID;
+    private Integer user2ID;
     private String user1Transaction;
     private String user2Transaction;
 
-    public Match(User user1, User user2) {
+    public Match() {
+    }
+
+    public Match(Integer user1ID, Integer user2ID) {
         this.status = MatchStatus.PENDING;
         Date currentDate = new Date();
         this.created = currentDate;
         this.lastModified = currentDate;
-        this.user1 = user1;
-        this.user2 = user2;
+        this.user1ID = user1ID;
+        this.user2ID = user2ID;
     }
 
-    public Match(Integer id, MatchStatus status, Date created, Date lastModified, User user1, User user2,
+    public Match(Integer id, MatchStatus status, Date created, Date lastModified, Integer user1ID, Integer user2ID,
                  String user1Transaction, String user2Transaction) {
         this.id = id;
         this.status = status;
         this.created = created;
         this.lastModified = lastModified;
-        this.user1 = user1;
-        this.user2 = user2;
+        this.user1ID = user1ID;
+        this.user2ID = user2ID;
         this.user1Transaction = user1Transaction;
         this.user2Transaction = user2Transaction;
     }
@@ -69,20 +72,20 @@ public class Match {
         this.lastModified = lastModified;
     }
 
-    public User getUser1() {
-        return user1;
+    public Integer getUser1ID() {
+        return user1ID;
     }
 
-    public void setUser1(User user1) {
-        this.user1 = user1;
+    public void setUser1ID(Integer user1ID) {
+        this.user1ID = user1ID;
     }
 
-    public User getUser2() {
-        return user2;
+    public Integer getUser2ID() {
+        return user2ID;
     }
 
-    public void setUser2(User user2) {
-        this.user2 = user2;
+    public void setUser2ID(Integer user2ID) {
+        this.user2ID = user2ID;
     }
 
     public String getUser1Transaction() {
