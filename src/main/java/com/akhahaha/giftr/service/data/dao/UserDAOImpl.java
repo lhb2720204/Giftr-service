@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * UserDAO JDBC Implementation
@@ -31,8 +33,9 @@ public class UserDAOImpl implements UserDAO {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, user.getStatus().getId());
-            ps.setDate(2, new Date(user.getJoinDate().getTime()));
-            ps.setDate(3, new Date(user.getLastActive().getTime()));
+            java.util.Date currentDate = new java.util.Date();
+            ps.setDate(2, new Date(currentDate.getTime()));
+            ps.setDate(3, new Date(currentDate.getTime()));
             ps.setInt(4, user.getGender().getId());
             ps.setString(5, user.getLocation());
             ps.setInt(6, user.getGiftType().getId());
@@ -65,21 +68,20 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void updateUser(User user) {
-        String sql = "UPDATE User SET status = ?, joinDate = ?, lastActive = ?, gender = ?, location = ?," +
-                "giftType = ?, interests = ? WHERE id = ?";
+        String sql = "UPDATE User SET status = ?, lastActive = ?, gender = ?, location = ?, giftType = ?," +
+                "interests = ? WHERE id = ?";
 
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, user.getStatus().getId());
-            ps.setDate(2, new Date(user.getJoinDate().getTime()));
-            ps.setDate(3, new Date(user.getLastActive().getTime()));
-            ps.setInt(4, user.getGender().getId());
-            ps.setString(5, user.getLocation());
-            ps.setInt(6, user.getGiftType().getId());
-            ps.setString(7, user.getInterests());
-            ps.setInt(8, user.getId());
+            ps.setDate(2, new Date(new java.util.Date().getTime()));
+            ps.setInt(3, user.getGender().getId());
+            ps.setString(4, user.getLocation());
+            ps.setInt(5, user.getGiftType().getId());
+            ps.setString(6, user.getInterests());
+            ps.setInt(7, user.getId());
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -96,7 +98,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User findUserByID(Integer userID) {
+    public User getUser(Integer userID) {
         String sql = "SELECT * FROM User WHERE id = ?";
 
         Connection connection = null;
@@ -109,12 +111,12 @@ public class UserDAOImpl implements UserDAO {
             if (rs.next()) {
                 user = new User(
                         rs.getInt("id"),
-                        findUserStatusByID(rs.getInt("status")),
+                        getUserStatus(rs.getInt("status")),
                         rs.getDate("joinDate"),
                         rs.getDate("lastActive"),
-                        findGenderByID(rs.getInt("gender")),
+                        getGender(rs.getInt("gender")),
                         rs.getString("location"),
-                        findGiftTypeByID(rs.getInt("giftType")),
+                        getGiftType(rs.getInt("giftType")),
                         rs.getString("interests"));
             }
 
@@ -137,7 +139,47 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public UserStatus findUserStatusByID(Integer userStatusID) {
+    public List<User> getAllUsers() {
+        String sql = "SELECT * FROM User";
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            List<User> users = new ArrayList<>();
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new User(
+                        rs.getInt("id"),
+                        getUserStatus(rs.getInt("status")),
+                        rs.getDate("joinDate"),
+                        rs.getDate("lastActive"),
+                        getGender(rs.getInt("gender")),
+                        rs.getString("location"),
+                        getGiftType(rs.getInt("giftType")),
+                        rs.getString("interests")));
+            }
+
+            rs.close();
+            ps.close();
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public UserStatus getUserStatus(Integer userStatusID) {
         String sql = "SELECT * FROM UserStatus WHERE id = ?";
 
         Connection connection = null;
@@ -171,7 +213,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public Gender findGenderByID(Integer genderID) {
+    public Gender getGender(Integer genderID) {
         String sql = "SELECT * FROM Gender WHERE id = ?";
 
         Connection connection = null;
@@ -205,7 +247,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public GiftType findGiftTypeByID(Integer giftTypeID) {
+    public GiftType getGiftType(Integer giftTypeID) {
         String sql = "SELECT * FROM GiftType WHERE id = ?";
 
         Connection connection = null;

@@ -12,6 +12,9 @@ public class Gender {
     private Integer id;
     private String name;
 
+    public Gender() {
+    }
+
     public Gender(Integer id, String name) {
         this.id = id;
         this.name = name;
@@ -21,7 +24,15 @@ public class Gender {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

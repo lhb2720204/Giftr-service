@@ -13,6 +13,9 @@ public class GiftType {
     private Integer id;
     private String name;
 
+    public GiftType() {
+    }
+
     public GiftType(Integer id, String name) {
         this.id = id;
         this.name = name;
@@ -22,7 +25,15 @@ public class GiftType {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

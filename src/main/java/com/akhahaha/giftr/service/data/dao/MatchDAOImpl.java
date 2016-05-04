@@ -115,8 +115,8 @@ public class MatchDAOImpl implements MatchDAO {
                         findMatchStatusByID(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
-                        userDAO.findUserByID(rs.getInt("user1")),
-                        userDAO.findUserByID(rs.getInt("user2")),
+                        userDAO.getUser(rs.getInt("user1")),
+                        userDAO.getUser(rs.getInt("user2")),
                         rs.getString("user1Transaction"),
                         rs.getString("user2Transaction"));
             }
@@ -158,8 +158,8 @@ public class MatchDAOImpl implements MatchDAO {
                         findMatchStatusByID(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
-                        userDAO.findUserByID(rs.getInt("user1")),
-                        userDAO.findUserByID(rs.getInt("user2")),
+                        userDAO.getUser(rs.getInt("user1")),
+                        userDAO.getUser(rs.getInt("user2")),
                         rs.getString("user1Transaction"),
                         rs.getString("user2Transaction")));
             }
@@ -203,8 +203,8 @@ public class MatchDAOImpl implements MatchDAO {
                         findMatchStatusByID(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
-                        userDAO.findUserByID(rs.getInt("user1")),
-                        userDAO.findUserByID(rs.getInt("user2")),
+                        userDAO.getUser(rs.getInt("user1")),
+                        userDAO.getUser(rs.getInt("user2")),
                         rs.getString("user1Transaction"),
                         rs.getString("user2Transaction")));
             }
