@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class User {
     private Integer id;
+    private String username;
     private UserStatus status;
     private Date joinDate;
     private Date lastActive;
@@ -15,6 +16,8 @@ public class User {
     private String location;
     private GiftType giftType;
     private String interests;
+    private Integer priceMin;
+    private Integer priceMax;
 
     /**
      * Creates a new User with default properties.
@@ -26,11 +29,14 @@ public class User {
         lastActive = currentDate;
         gender = Gender.UNKNOWN;
         giftType = GiftType.UNKNOWN;
+        priceMin = 0;
+        priceMax = 0;
     }
 
-    public User(Integer id, UserStatus status, Date joinDate, Date lastActive, Gender gender, String location,
-                GiftType giftType, String interests) {
+    public User(Integer id, String username, UserStatus status, Date joinDate, Date lastActive, Gender gender, String location,
+                GiftType giftType, String interests, Integer priceMin, Integer priceMax) {
         this.id = id;
+        this.username = username;
         this.status = status;
         this.joinDate = joinDate;
         this.lastActive = lastActive;
@@ -38,6 +44,8 @@ public class User {
         this.location = location;
         this.giftType = giftType;
         this.interests = interests;
+        this.priceMin = priceMin;
+        this.priceMax = priceMax;
     }
 
     public Integer getId() {
@@ -46,6 +54,14 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public UserStatus getStatus() {
@@ -102,5 +118,21 @@ public class User {
 
     public void setInterests(String interests) {
         this.interests = interests;
+    }
+
+    public Integer getPriceMin() {
+        return priceMin;
+    }
+
+    public void setPriceMin(Integer priceMin) {
+        this.priceMin = priceMin;
+    }
+
+    public Integer getPriceMax() {
+        return priceMax;
+    }
+
+    public void setPriceMax(Integer priceMax) {
+        this.priceMax = priceMax;
     }
 }

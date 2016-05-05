@@ -46,12 +46,16 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> upsertCurrentUser(
+    public ResponseEntity<?> addUser(
             @RequestBody(required = false) User userInput) {
         // TODO Validate authorization
 
         User user = userInput != null ? userInput : new User();
         Integer userID = userDAO.insertUser(user);
+        if (userID == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create user.");
+        }
+
         user = userDAO.getUser(userID);
 
         HttpHeaders headers = new HttpHeaders();

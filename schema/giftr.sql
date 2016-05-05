@@ -1,10 +1,5 @@
 CREATE DATABASE  IF NOT EXISTS `giftr` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `giftr`;
--- MySQL dump 10.13  Distrib 5.6.24, for Win64 (x86_64)
---
--- Host: 192.168.99.100    Database: giftr
--- ------------------------------------------------------
--- Server version	5.7.12
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -81,6 +76,8 @@ CREATE TABLE `Match` (
   `status` int(11) unsigned NOT NULL,
   `created` datetime NOT NULL,
   `lastModified` datetime NOT NULL,
+  `priceMin` int(11) DEFAULT '0',
+  `priceMax` int(11) DEFAULT '0',
   `user1` int(11) unsigned NOT NULL,
   `user2` int(11) unsigned NOT NULL,
   `user1Transaction` int(11) DEFAULT NULL,
@@ -140,6 +137,7 @@ DROP TABLE IF EXISTS `User`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `User` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) DEFAULT NULL,
   `status` int(11) unsigned NOT NULL,
   `joinDate` datetime NOT NULL,
   `lastActive` datetime NOT NULL,
@@ -147,8 +145,11 @@ CREATE TABLE `User` (
   `location` tinytext,
   `giftType` int(11) unsigned NOT NULL,
   `interests` tinytext,
+  `priceMin` int(11) unsigned DEFAULT '0',
+  `priceMax` int(11) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `username_UNIQUE` (`username`),
   KEY `fk_user_status_idx` (`status`),
   KEY `fk_user_gender_idx` (`gender`),
   KEY `fk_user_gifttype_idx` (`giftType`),
@@ -201,5 +202,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2016-04-29 12:34:53

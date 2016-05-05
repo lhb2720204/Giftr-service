@@ -25,21 +25,25 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public Integer insertUser(User user) {
-        String sql = "INSERT INTO User (status, joinDate, lastActive, gender, location, giftType, interests) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User (username, status, joinDate, lastActive, gender, location, " +
+                "giftType, interests, priceMin, priceMax) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, user.getStatus().getId());
+            ps.setString(1, user.getUsername());
+            ps.setInt(2, user.getStatus().getId());
             java.util.Date currentDate = new java.util.Date();
-            ps.setDate(2, new Date(currentDate.getTime()));
             ps.setDate(3, new Date(currentDate.getTime()));
-            ps.setInt(4, user.getGender().getId());
-            ps.setString(5, user.getLocation());
-            ps.setInt(6, user.getGiftType().getId());
-            ps.setString(7, user.getInterests());
+            ps.setDate(4, new Date(currentDate.getTime()));
+            ps.setInt(5, user.getGender().getId());
+            ps.setString(6, user.getLocation());
+            ps.setInt(7, user.getGiftType().getId());
+            ps.setString(8, user.getInterests());
+            ps.setInt(9, user.getPriceMin());
+            ps.setInt(10, user.getPriceMax());
             ps.executeUpdate();
 
             Integer id = null;
@@ -68,20 +72,47 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void updateUser(User user) {
-        String sql = "UPDATE User SET status = ?, lastActive = ?, gender = ?, location = ?, giftType = ?," +
-                "interests = ? WHERE id = ?";
+        String sql = "UPDATE User SET username = ?, status = ?, lastActive = ?, gender = ?, location = ?," +
+                "giftType = ?, interests = ?, priceMin = ?, priceMax = ? WHERE id = ?";
 
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, user.getStatus().getId());
-            ps.setDate(2, new Date(new java.util.Date().getTime()));
-            ps.setInt(3, user.getGender().getId());
-            ps.setString(4, user.getLocation());
-            ps.setInt(5, user.getGiftType().getId());
-            ps.setString(6, user.getInterests());
-            ps.setInt(7, user.getId());
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, user.getUsername());
+            ps.setInt(2, user.getStatus().getId());
+            ps.setDate(3, new Date(new java.util.Date().getTime()));
+            ps.setInt(4, user.getGender().getId());
+            ps.setString(5, user.getLocation());
+            ps.setInt(6, user.getGiftType().getId());
+            ps.setString(7, user.getInterests());
+            ps.setInt(8, user.getPriceMin());
+            ps.setInt(9, user.getPriceMax());
+            ps.setInt(10, user.getId());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deleteUser(Integer userID) {
+        String sql = "DELETE FROM User WHERE id = ?";
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userID);
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -111,13 +142,16 @@ public class UserDAOImpl implements UserDAO {
             if (rs.next()) {
                 user = new User(
                         rs.getInt("id"),
+                        rs.getString("username"),
                         getUserStatus(rs.getInt("status")),
                         rs.getDate("joinDate"),
                         rs.getDate("lastActive"),
                         getGender(rs.getInt("gender")),
                         rs.getString("location"),
                         getGiftType(rs.getInt("giftType")),
-                        rs.getString("interests"));
+                        rs.getString("interests"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax"));
             }
 
             rs.close();
@@ -137,30 +171,6 @@ public class UserDAOImpl implements UserDAO {
 
         return null;
     }
-    
-    @Override
-    public void deleteUser(Integer userID) {
-    	String sql = "DELETE FROM User WHERE id = ?";
-    	
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, userID);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     @Override
     public List<User> getAllUsers() {
@@ -175,13 +185,16 @@ public class UserDAOImpl implements UserDAO {
             while (rs.next()) {
                 users.add(new User(
                         rs.getInt("id"),
+                        rs.getString("username"),
                         getUserStatus(rs.getInt("status")),
                         rs.getDate("joinDate"),
                         rs.getDate("lastActive"),
                         getGender(rs.getInt("gender")),
                         rs.getString("location"),
                         getGiftType(rs.getInt("giftType")),
-                        rs.getString("interests")));
+                        rs.getString("interests"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax")));
             }
 
             rs.close();

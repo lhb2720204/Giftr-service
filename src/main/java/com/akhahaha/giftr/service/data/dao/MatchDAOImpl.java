@@ -23,9 +23,9 @@ public class MatchDAOImpl implements MatchDAO {
 
     @Override
     public Integer insertMatch(Match match) {
-        String sql = "INSERT INTO `Match` (status, created, lastModified, user1, user2, " +
-                "user1Transaction, user2Transaction) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `Match` (status, created, lastModified, priceMin, priceMax, " +
+                "user1, user2, user1Transaction, user2Transaction) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection connection = null;
         try {
@@ -34,10 +34,12 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setInt(1, match.getStatus().getId());
             ps.setDate(2, new Date(match.getCreated().getTime()));
             ps.setDate(3, new Date(match.getLastModified().getTime()));
-            ps.setInt(4, match.getUser1ID());
-            ps.setInt(5, match.getUser2ID());
-            ps.setString(6, match.getUser1Transaction());
-            ps.setString(7, match.getUser2Transaction());
+            ps.setInt(4, match.getPriceMin());
+            ps.setInt(5, match.getPriceMax());
+            ps.setInt(6, match.getUser1ID());
+            ps.setInt(7, match.getUser2ID());
+            ps.setString(8, match.getUser1Transaction());
+            ps.setString(9, match.getUser2Transaction());
             ps.executeUpdate();
 
             Integer id = null;
@@ -66,8 +68,8 @@ public class MatchDAOImpl implements MatchDAO {
 
     @Override
     public void updateMatch(Match match) {
-        String sql = "UPDATE `Match` SET status = ?, lastModified = ?, user1Transaction = ?, user2Transaction = ? " +
-                "WHERE id = ?";
+        String sql = "UPDATE `Match` SET status = ?, lastModified = ?, priceMin = ?, priceMax = ?, " +
+                "user1Transaction = ?, user2Transaction = ? WHERE id = ?";
 
         Connection connection = null;
         try {
@@ -75,9 +77,35 @@ public class MatchDAOImpl implements MatchDAO {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, match.getStatus().getId());
             ps.setDate(2, new Date(new java.util.Date().getTime()));
-            ps.setString(3, match.getUser1Transaction());
-            ps.setString(4, match.getUser2Transaction());
-            ps.setInt(5, match.getId());
+            ps.setInt(3, match.getPriceMin());
+            ps.setInt(4, match.getPriceMax());
+            ps.setString(5, match.getUser1Transaction());
+            ps.setString(6, match.getUser2Transaction());
+            ps.setInt(7, match.getId());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deleteMatch(Integer matchID) {
+        String sql = "DELETE FROM `Match` WHERE id = ?";
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, matchID);
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -105,12 +133,13 @@ public class MatchDAOImpl implements MatchDAO {
             Match match = null;
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
                 match = new Match(
                         rs.getInt("id"),
                         getMatchStatus(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getString("user1Transaction"),
@@ -136,30 +165,6 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
-    public void deleteMatch(Integer matchID) {
-    	String sql = "DELETE FROM Match WHERE id = ?";
-    	
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, matchID);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    @Override
     public List<Match> getAllMatches() {
         String sql = "SELECT * FROM `Match`";
 
@@ -169,13 +174,14 @@ public class MatchDAOImpl implements MatchDAO {
             PreparedStatement ps = connection.prepareStatement(sql);
             List<Match> matches = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
-            UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
             while (rs.next()) {
                 matches.add(new Match(
                         rs.getInt("id"),
                         getMatchStatus(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getString("user1Transaction"),
@@ -212,13 +218,14 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setInt(2, userID);
             List<Match> matches = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
-            UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
             while (rs.next()) {
                 matches.add(new Match(
                         rs.getInt("id"),
                         getMatchStatus(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getString("user1Transaction"),
@@ -257,13 +264,14 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setInt(4, userID1);
             List<Match> matches = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
-            UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
             while (rs.next()) {
                 matches.add(new Match(
                         rs.getInt("id"),
                         getMatchStatus(rs.getInt("status")),
                         rs.getDate("created"),
                         rs.getDate("lastModified"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getString("user1Transaction"),

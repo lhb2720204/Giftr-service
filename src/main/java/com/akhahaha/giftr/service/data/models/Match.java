@@ -11,6 +11,8 @@ public class Match {
     private MatchStatus status;
     private Date created;
     private Date lastModified;
+    private Integer priceMin;
+    private Integer priceMax;
     private Integer user1ID;
     private Integer user2ID;
     private String user1Transaction;
@@ -26,14 +28,18 @@ public class Match {
         this.lastModified = currentDate;
         this.user1ID = user1ID;
         this.user2ID = user2ID;
+        this.priceMin = 0;
+        this.priceMax = 0;
     }
 
-    public Match(Integer id, MatchStatus status, Date created, Date lastModified, Integer user1ID, Integer user2ID,
-                 String user1Transaction, String user2Transaction) {
+    public Match(Integer id, MatchStatus status, Date created, Date lastModified, Integer priceMin, Integer priceMax,
+                 Integer user1ID, Integer user2ID, String user1Transaction, String user2Transaction) {
         this.id = id;
         this.status = status;
         this.created = created;
         this.lastModified = lastModified;
+        this.priceMin = priceMin;
+        this.priceMax = priceMax;
         this.user1ID = user1ID;
         this.user2ID = user2ID;
         this.user1Transaction = user1Transaction;
@@ -70,6 +76,22 @@ public class Match {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public Integer getPriceMin() {
+        return priceMin;
+    }
+
+    public void setPriceMin(Integer priceMin) {
+        this.priceMin = priceMin;
+    }
+
+    public Integer getPriceMax() {
+        return priceMax;
+    }
+
+    public void setPriceMax(Integer priceMax) {
+        this.priceMax = priceMax;
     }
 
     public Integer getUser1ID() {
