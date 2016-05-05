@@ -114,8 +114,6 @@ public class MatchController {
             @RequestParam(required = false) Integer status,
             @RequestParam(required = false) Integer priceMin,
             @RequestParam(required = false) Integer priceMax,
-            @RequestParam(required = false) Integer user1ID,
-            @RequestParam(required = false) Integer user2ID,
             @RequestParam(required = false) Integer user1Transaction,
             @RequestParam(required = false) Integer user2Transaction) {
         // TODO Validate authorization
@@ -125,7 +123,7 @@ public class MatchController {
             throw new MatchNotFoundException(matchID);
         }
 
-        setMatchFields(match, matchID, status, priceMin, priceMax, user1ID, user2ID,
+        setMatchFields(match, matchID, status, priceMin, priceMax, null, null,
                 user1Transaction, user2Transaction);
         matchDAO.updateMatch(match);
         match = matchDAO.getMatch(matchID);
