@@ -1,5 +1,8 @@
 package com.akhahaha.giftr.service.data.models;
 
+import com.akhahaha.giftr.service.View;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import java.util.Date;
 
 /**
@@ -7,16 +10,26 @@ import java.util.Date;
  * Created by Alan on 4/29/2016.
  */
 public class User {
+    @JsonView(View.Summary.class)
     private Integer id;
+    @JsonView(View.Summary.class)
     private String username;
+    @JsonView(View.Summary.class)
     private UserStatus status;
     private Date joinDate;
+    @JsonView(View.Summary.class)
     private Date lastActive;
+    @JsonView(View.Summary.class)
     private Gender gender;
+    @JsonView(View.Summary.class)
     private String location;
+    @JsonView(View.Summary.class)
     private GiftType giftType;
+    @JsonView(View.Summary.class)
     private String interests;
+    @JsonView(View.Summary.class)
     private Integer priceMin;
+    @JsonView(View.Summary.class)
     private Integer priceMax;
 
     /**

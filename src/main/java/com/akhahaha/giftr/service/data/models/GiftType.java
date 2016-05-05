@@ -1,5 +1,8 @@
 package com.akhahaha.giftr.service.data.models;
 
+import com.akhahaha.giftr.service.View;
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * GiftType model
  * Created by Alan on 4/29/2016.
@@ -10,7 +13,9 @@ public class GiftType {
     public static final GiftType GAG = new GiftType(3, "Gag");
     public static final GiftType BOTH = new GiftType(4, "Both");
 
+    @JsonView(View.Summary.class)
     private Integer id;
+    @JsonView(View.Summary.class)
     private String name;
 
     public GiftType() {

@@ -1,5 +1,8 @@
 package com.akhahaha.giftr.service.data.models;
 
+import com.akhahaha.giftr.service.View;
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * Gender model
  * Created by Alan on 4/29/2016.
@@ -9,7 +12,9 @@ public class Gender {
     public static final Gender MALE = new Gender(2, "Male");
     public static final Gender FEMALE = new Gender(3, "Female");
 
+    @JsonView(View.Summary.class)
     private Integer id;
+    @JsonView(View.Summary.class)
     private String name;
 
     public Gender() {

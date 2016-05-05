@@ -1,5 +1,8 @@
 package com.akhahaha.giftr.service.data.models;
 
+import com.akhahaha.giftr.service.View;
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * UserStatus model
  * Created by Alan on 4/29/2016.
@@ -10,7 +13,9 @@ public class UserStatus {
     public static final UserStatus DELETED = new UserStatus(3, "Deleted");
     public static final UserStatus FLAGGED = new UserStatus(4, "Flagged");
 
+    @JsonView(View.Summary.class)
     private Integer id;
+    @JsonView(View.Summary.class)
     private String name;
 
     public UserStatus() {

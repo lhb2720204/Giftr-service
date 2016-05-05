@@ -1,10 +1,12 @@
 package com.akhahaha.giftr.service.controllers;
 
+import com.akhahaha.giftr.service.View;
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.MatchDAO;
 import com.akhahaha.giftr.service.data.dao.UserDAO;
 import com.akhahaha.giftr.service.data.models.Match;
 import com.akhahaha.giftr.service.data.models.User;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +28,7 @@ public class UserController {
     /**
      * Searches on all users
      */
+    @JsonView(View.Summary.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> searchUsers() {
