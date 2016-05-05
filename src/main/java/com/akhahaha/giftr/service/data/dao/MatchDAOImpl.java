@@ -38,8 +38,8 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setInt(5, match.getPriceMax());
             ps.setInt(6, match.getUser1ID());
             ps.setInt(7, match.getUser2ID());
-            ps.setString(8, match.getUser1Transaction());
-            ps.setString(9, match.getUser2Transaction());
+            ps.setInt(8, match.getUser1Transaction());
+            ps.setInt(9, match.getUser2Transaction());
             ps.executeUpdate();
 
             Integer id = null;
@@ -79,8 +79,8 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setDate(2, new Date(new java.util.Date().getTime()));
             ps.setInt(3, match.getPriceMin());
             ps.setInt(4, match.getPriceMax());
-            ps.setString(5, match.getUser1Transaction());
-            ps.setString(6, match.getUser2Transaction());
+            ps.setInt(5, match.getUser1Transaction());
+            ps.setInt(6, match.getUser2Transaction());
             ps.setInt(7, match.getId());
             ps.executeUpdate();
             ps.close();
@@ -142,8 +142,8 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
-                        rs.getString("user1Transaction"),
-                        rs.getString("user2Transaction"));
+                        rs.getInt("user1Transaction"),
+                        rs.getInt("user2Transaction"));
             }
 
             rs.close();
@@ -184,8 +184,8 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
-                        rs.getString("user1Transaction"),
-                        rs.getString("user2Transaction")));
+                        rs.getInt("user1Transaction"),
+                        rs.getInt("user2Transaction")));
             }
 
             rs.close();
@@ -228,8 +228,8 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
-                        rs.getString("user1Transaction"),
-                        rs.getString("user2Transaction")));
+                        rs.getInt("user1Transaction"),
+                        rs.getInt("user2Transaction")));
             }
 
             rs.close();
@@ -274,8 +274,8 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("priceMax"),
                         rs.getInt("user1"),
                         rs.getInt("user2"),
-                        rs.getString("user1Transaction"),
-                        rs.getString("user2Transaction")));
+                        rs.getInt("user1Transaction"),
+                        rs.getInt("user2Transaction")));
             }
 
             rs.close();

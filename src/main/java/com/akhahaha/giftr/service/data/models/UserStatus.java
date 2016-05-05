@@ -21,6 +21,27 @@ public class UserStatus {
     public UserStatus() {
     }
 
+    public UserStatus(Integer id) {
+        this.id = id;
+        switch (id) {
+            case 1:
+                this.name = "Active";
+                break;
+            case 2:
+                this.name = "Inactive";
+                break;
+            case 3:
+                this.name = "Deleted";
+                break;
+            case 4:
+                this.name = "Flagged";
+                break;
+            default:
+                this.name = "Active";
+                break;
+        }
+    }
+
     public UserStatus(Integer id, String name) {
         this.id = id;
         this.name = name;

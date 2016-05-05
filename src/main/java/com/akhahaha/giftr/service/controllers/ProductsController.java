@@ -25,7 +25,7 @@ public class ProductsController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> searchProducts(
-            @RequestParam(value = "keyword", required = false) String keyword) {
+            @RequestParam(required = false) String keyword) {
         // TODO Validate credentials
         // TODO Add more search fields
         List<Product> products = productDAO.searchProductsByKeyword(keyword);

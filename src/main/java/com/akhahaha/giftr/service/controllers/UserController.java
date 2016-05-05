@@ -4,12 +4,10 @@ import com.akhahaha.giftr.service.View;
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.MatchDAO;
 import com.akhahaha.giftr.service.data.dao.UserDAO;
-import com.akhahaha.giftr.service.data.models.Match;
-import com.akhahaha.giftr.service.data.models.User;
+import com.akhahaha.giftr.service.data.models.*;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -48,13 +46,22 @@ public class UserController {
      * Creates or inserts a new User
      */
     @JsonView(View.Detailed.class)
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> addUser(
-            @RequestBody(required = false) User userInput) {
+            @RequestParam(required = false) String username,
+            @RequestParam(defaultValue = "1") Integer status,
+            @RequestParam(defaultValue = "1") Integer gender,
+            @RequestParam(required = false) String location,
+            @RequestParam(defaultValue = "1") Integer giftType,
+            @RequestParam(required = false) String interests,
+            @RequestParam(defaultValue = "0") Integer priceMin,
+            @RequestParam(defaultValue = "0") Integer priceMax) {
         // TODO Validate authorization
 
-        User user = userInput != null ? userInput : new User();
+        User user = new User();
+        setUserFields(user, null, username, status, gender, location, giftType, interests, priceMin, priceMax);
+
         Integer userID = userDAO.insertUser(user);
         if (userID == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create user.");
@@ -76,7 +83,7 @@ public class UserController {
     @RequestMapping(value = "/{userID}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getUser(
-            @PathVariable("userID") Integer userID) {
+            @PathVariable Integer userID) {
         // TODO Validate authorization
         validateUserExists(userID);
 
@@ -96,13 +103,20 @@ public class UserController {
     @RequestMapping(value = "/{userID}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> updateUser(
-            @PathVariable("userID") Integer userID,
-            @RequestBody User userInput) {
+            @PathVariable Integer userID,
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) Integer gender,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Integer giftType,
+            @RequestParam(required = false) String interests,
+            @RequestParam(required = false) Integer priceMin,
+            @RequestParam(required = false) Integer priceMax) {
         // TODO Validate authorization
         validateUserExists(userID);
 
-        User user = userInput;
-        user.setId(userID);
+        User user = userDAO.getUser(userID);
+        setUserFields(user, userID, username, status, gender, location, giftType, interests, priceMin, priceMax);
         userDAO.updateUser(user);
         user = userDAO.getDetailedUser(userID);
 
@@ -119,7 +133,7 @@ public class UserController {
     @RequestMapping(value = "/{userID}/matches", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getUserMatches(
-            @PathVariable("userID") Integer userID) {
+            @PathVariable Integer userID) {
         // TODO Validate authorization
         validateUserExists(userID);
 
@@ -143,5 +157,18 @@ public class UserController {
         UserNotFoundException(Integer userID) {
             super("Could not find user '" + userID + "'.");
         }
+    }
+
+    private void setUserFields(User user, Integer userID, String username, Integer status, Integer gender,
+                               String location, Integer giftType, String interests, Integer priceMin, Integer priceMax) {
+        if (userID != null) user.setId(userID);
+        if (username != null) user.setUsername(username);
+        if (status != null) user.setStatus(new UserStatus(status));
+        if (gender != null) user.setGender(new Gender(gender));
+        if (location != null) user.setLocation(location);
+        if (giftType != null) user.setGiftType(new GiftType(giftType));
+        if (interests != null) user.setInterests(interests);
+        if (priceMin != null) user.setPriceMin(priceMin);
+        if (priceMax != null) user.setPriceMax(priceMax);
     }
 }

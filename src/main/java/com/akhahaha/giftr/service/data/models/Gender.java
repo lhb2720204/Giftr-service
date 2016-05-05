@@ -20,6 +20,24 @@ public class Gender {
     public Gender() {
     }
 
+    public Gender(Integer id) {
+        this.id = id;
+        switch (id) {
+            case 1:
+                this.name = "Unknown";
+                break;
+            case 2:
+                this.name = "Male";
+                break;
+            case 3:
+                this.name = "Female";
+                break;
+            default:
+                this.name = "Unknown";
+                break;
+        }
+    }
+
     public Gender(Integer id, String name) {
         this.id = id;
         this.name = name;

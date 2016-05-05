@@ -14,6 +14,21 @@ public class MatchStatus {
     public MatchStatus() {
     }
 
+    public MatchStatus(Integer id) {
+        this.id = id;
+        switch (id) {
+            case 1:
+                this.name = "Pending";
+                break;
+            case 2:
+                this.name = "Completed";
+                break;
+            default:
+                this.name = "Pending";
+                break;
+        }
+    }
+
     public MatchStatus(Integer id, String name) {
         this.id = id;
         this.name = name;

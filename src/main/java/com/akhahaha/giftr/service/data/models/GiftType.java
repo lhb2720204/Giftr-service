@@ -21,6 +21,27 @@ public class GiftType {
     public GiftType() {
     }
 
+    public GiftType(Integer id) {
+        this.id = id;
+        switch (id) {
+            case 1:
+                this.name = "Unknown";
+                break;
+            case 2:
+                this.name = "Practical";
+                break;
+            case 3:
+                this.name = "Gag";
+                break;
+            case 4:
+                this.name = "Both";
+                break;
+            default:
+                this.name = "Unknown";
+                break;
+        }
+    }
+
     public GiftType(Integer id, String name) {
         this.id = id;
         this.name = name;
