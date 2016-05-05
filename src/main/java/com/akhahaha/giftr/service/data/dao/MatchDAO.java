@@ -21,6 +21,8 @@ public interface MatchDAO extends DAO {
     void updateMatch(Match match);
 
     Match getMatch(Integer matchID);
+    
+    void deleteMatch(Integer matchID);
 
     List<Match> getAllMatches();
 

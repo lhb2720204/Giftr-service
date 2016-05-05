@@ -136,6 +136,30 @@ public class MatchDAOImpl implements MatchDAO {
     }
 
     @Override
+    public void deleteMatch(Integer matchID) {
+    	String sql = "DELETE FROM Match WHERE id = ?";
+    	
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, matchID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
     public List<Match> getAllMatches() {
         String sql = "SELECT * FROM `Match`";
 

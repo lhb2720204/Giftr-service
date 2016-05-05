@@ -137,6 +137,30 @@ public class UserDAOImpl implements UserDAO {
 
         return null;
     }
+    
+    @Override
+    public void deleteUser(Integer userID) {
+    	String sql = "DELETE FROM User WHERE id = ?";
+    	
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     @Override
     public List<User> getAllUsers() {

@@ -23,6 +23,8 @@ public interface UserDAO extends DAO {
     void updateUser(User user);
 
     User getUser(Integer userID);
+    
+    void deleteUser(Integer userID);
 
     List<User> getAllUsers();
 
