@@ -173,6 +173,64 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public User getDetailedUser(Integer userID) {
+        String sql = "SELECT * FROM User WHERE id = ?";
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userID);
+            User user = null;
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                user = new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        getUserStatus(rs.getInt("status")),
+                        rs.getDate("joinDate"),
+                        rs.getDate("lastActive"),
+                        getGender(rs.getInt("gender")),
+                        rs.getString("location"),
+                        getGiftType(rs.getInt("giftType")),
+                        rs.getString("interests"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax"));
+                rs.close();
+                ps.close();
+
+                // Get User matches
+                sql = "SELECT id FROM `Match` WHERE user1 = ? OR user2 = ?";
+                ps = connection.prepareStatement(sql);
+                ps.setInt(1, userID);
+                ps.setInt(2, userID);
+                List<Integer> matches = new ArrayList<>();
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    matches.add(rs.getInt("id"));
+                }
+                user.setMatches(matches);
+            }
+
+            rs.close();
+            ps.close();
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public List<User> getAllUsers() {
         String sql = "SELECT * FROM User";
 

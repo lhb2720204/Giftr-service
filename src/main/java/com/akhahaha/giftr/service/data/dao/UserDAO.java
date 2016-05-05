@@ -26,6 +26,8 @@ public interface UserDAO extends DAO {
 
     User getUser(Integer userID);
 
+    User getDetailedUser(Integer userID);
+
     List<User> getAllUsers();
 
     UserStatus getUserStatus(Integer userStatusID);

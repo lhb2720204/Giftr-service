@@ -47,6 +47,7 @@ public class UserController {
     /**
      * Creates or inserts a new User
      */
+    @JsonView(View.Detailed.class)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> addUser(
@@ -59,7 +60,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create user.");
         }
 
-        user = userDAO.getUser(userID);
+        user = userDAO.getDetailedUser(userID);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder
@@ -71,16 +72,15 @@ public class UserController {
     /**
      * Returns the specified User
      */
+    @JsonView(View.Detailed.class)
     @RequestMapping(value = "/{userID}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getUser(
             @PathVariable("userID") Integer userID) {
         // TODO Validate authorization
+        validateUserExists(userID);
 
-        User user = userDAO.getUser(userID);
-        if (user == null) {
-            throw new UserNotFoundException(userID);
-        }
+        User user = userDAO.getDetailedUser(userID);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder
@@ -92,22 +92,19 @@ public class UserController {
     /**
      * Updates the specified User
      */
+    @JsonView(View.Detailed.class)
     @RequestMapping(value = "/{userID}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> updateUser(
             @PathVariable("userID") Integer userID,
             @RequestBody User userInput) {
         // TODO Validate authorization
+        validateUserExists(userID);
 
-        User user = userDAO.getUser(userID);
-        if (user == null) {
-            throw new UserNotFoundException(userID);
-        }
-
-        user = userInput;
+        User user = userInput;
         user.setId(userID);
         userDAO.updateUser(user);
-        user = userDAO.getUser(userID);
+        user = userDAO.getDetailedUser(userID);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder
@@ -124,11 +121,7 @@ public class UserController {
     public ResponseEntity<?> getUserMatches(
             @PathVariable("userID") Integer userID) {
         // TODO Validate authorization
-
-        User user = userDAO.getUser(userID);
-        if (user == null) {
-            throw new UserNotFoundException(userID);
-        }
+        validateUserExists(userID);
 
         List<Match> matches = matchDAO.findMatchesByUser(userID);
 
@@ -137,6 +130,12 @@ public class UserController {
                 .fromCurrentRequest()
                 .buildAndExpand().toUri());
         return new ResponseEntity<>(matches, headers, HttpStatus.OK);
+    }
+
+    private void validateUserExists(Integer userID) {
+        if (userDAO.getUser(userID) == null) {
+            throw new UserNotFoundException(userID);
+        }
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -4,6 +4,7 @@ import com.akhahaha.giftr.service.View;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * User model
@@ -31,6 +32,8 @@ public class User {
     private Integer priceMin;
     @JsonView(View.Summary.class)
     private Integer priceMax;
+    @JsonView(View.Detailed.class)
+    private List<Integer> matches;
 
     /**
      * Creates a new User with default properties.
@@ -147,5 +150,13 @@ public class User {
 
     public void setPriceMax(Integer priceMax) {
         this.priceMax = priceMax;
+    }
+
+    public List<Integer> getMatches() {
+        return matches;
+    }
+
+    public void setMatches(List<Integer> matches) {
+        this.matches = matches;
     }
 }
