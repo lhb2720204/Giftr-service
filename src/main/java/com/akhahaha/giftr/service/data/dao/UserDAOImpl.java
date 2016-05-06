@@ -173,6 +173,50 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public User getUserByUsername(String username) {
+        String sql = "SELECT * FROM User WHERE username = ?";
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, username);
+            User user = null;
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                user = new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        getUserStatus(rs.getInt("status")),
+                        rs.getDate("joinDate"),
+                        rs.getDate("lastActive"),
+                        getGender(rs.getInt("gender")),
+                        rs.getString("location"),
+                        getGiftType(rs.getInt("giftType")),
+                        rs.getString("interests"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax"));
+            }
+
+            rs.close();
+            ps.close();
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public User getDetailedUser(Integer userID) {
         String sql = "SELECT * FROM User WHERE id = ?";
 

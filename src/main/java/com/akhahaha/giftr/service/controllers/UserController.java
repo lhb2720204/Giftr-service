@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,16 +26,26 @@ public class UserController {
     private MatchDAO matchDAO = (MatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.MATCH);
 
     /**
-     * Searches on all users
+     * Searches on all Users
+     *
+     * @param username Username of user
+     * @return Returns Users matching the criteria, or all Users by default
      */
     @JsonView(View.Summary.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> searchUsers() {
+    public ResponseEntity<?> searchUsers(@RequestParam(required = false) String username) {
         // TODO Validate authorization
-        // TODO Implement search parameters
 
-        List<User> users = userDAO.getAllUsers();
+        // TODO Implement search parameters
+        List<User> users;
+        if (username != null) {
+            users = new ArrayList<>();
+            users.add(userDAO.getUserByUsername(username));
+        } else {
+            // Return all users by default
+            users = userDAO.getAllUsers();
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder
