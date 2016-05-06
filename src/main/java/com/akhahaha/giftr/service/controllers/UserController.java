@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * User service controller
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
 public class UserController {

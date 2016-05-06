@@ -17,6 +17,7 @@ import java.util.List;
  * Match service controller
  * Created by Alan on 5/4/2016.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/matches")
 public class MatchController {
