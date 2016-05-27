@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class UserController {
      * Creates or inserts a new User
      */
     @JsonView(View.Detailed.class)
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> addUser(
             @RequestParam(required = false) String username,
@@ -106,6 +107,25 @@ public class UserController {
                 .fromCurrentRequest()
                 .buildAndExpand(userID).toUri());
         return new ResponseEntity<>(user, headers, HttpStatus.OK);
+    }
+    
+    /**
+     * Returns the logged in User
+     */
+    @JsonView(View.Detailed.class)
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> currentUserName(Principal principal) {
+        String username = principal.getName();
+
+        User user = userDAO.getUserByUsername(username);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand(user.getId()).toUri());
+        return new ResponseEntity<>(user, headers, HttpStatus.OK);
+
     }
 
     /**
