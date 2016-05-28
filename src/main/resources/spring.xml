@@ -4,9 +4,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="url" value="${mysql.url}"/>
-        <property name="username" value="${mysql.user}"/>
-        <property name="password" value="${mysql.password"/>
+        <property name="url" value="jdbc:mysql://giftr.cbhlcja7j2ed.us-west-2.rds.amazonaws.com:3306/giftr"/>
+        <property name="username" value="developer"/>
+        <property name="password" value="giftrrocks"/>
     </bean>
 
     <bean id="catalogClient" class="com.akhahaha.shopzilla.catalog.client.CatalogClientImpl">
