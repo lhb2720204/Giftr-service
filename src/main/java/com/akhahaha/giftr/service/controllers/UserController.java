@@ -4,6 +4,7 @@ import com.akhahaha.giftr.service.View;
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.MatchDAO;
 import com.akhahaha.giftr.service.data.dao.UserDAO;
+import com.akhahaha.giftr.service.data.dao.queryBuilder.UserQueryBuilder;
 import com.akhahaha.giftr.service.data.models.*;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpHeaders;
@@ -27,26 +28,25 @@ public class UserController {
     private MatchDAO matchDAO = (MatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.MATCH);
 
     /**
-     * Searches on all Users
-     *
-     * @param username Username of user
-     * @return Returns Users matching the criteria, or all Users by default
+     * Advanced search for users
+     * If no parameter is provided, returns all users that are not deleted
      */
     @JsonView(View.Summary.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> searchUsers(@RequestParam(required = false) String username) {
-        // TODO Validate authorization
-
-        // TODO Implement search parameters
+    public ResponseEntity<?> searchUsers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) Integer gender,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Integer giftType,
+            @RequestParam(required = false) String interests,
+            @RequestParam(required = false) Integer priceMin,
+            @RequestParam(required = false) Integer priceMax) {
+    	
+        User conditionForm = new User();
+        setUserFields(conditionForm, null, username, null, gender, location, giftType, interests, priceMin, priceMax);
         List<User> users;
-        if (username != null) {
-            users = new ArrayList<>();
-            users.add(userDAO.getUserByUsername(username));
-        } else {
-            // Return all users by default
-            users = userDAO.getAllUsers();
-        }
+        users = userDAO.getUsersByAdvancedSearch(conditionForm);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder

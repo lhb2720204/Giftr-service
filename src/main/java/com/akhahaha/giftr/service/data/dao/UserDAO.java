@@ -31,6 +31,9 @@ public interface UserDAO extends DAO {
     User getDetailedUser(Integer userID);
 
     List<User> getAllUsers();
+    
+    // use an instance of User class to pass search conditions
+    List<User> getUsersByAdvancedSearch(User conditionForm);
 
     UserStatus getUserStatus(Integer userStatusID);
 

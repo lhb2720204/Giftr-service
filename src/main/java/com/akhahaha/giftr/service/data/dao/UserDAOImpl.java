@@ -1,5 +1,6 @@
 package com.akhahaha.giftr.service.data.dao;
 
+import com.akhahaha.giftr.service.data.dao.queryBuilder.UserQueryBuilder;
 import com.akhahaha.giftr.service.data.models.Gender;
 import com.akhahaha.giftr.service.data.models.GiftType;
 import com.akhahaha.giftr.service.data.models.User;
@@ -282,6 +283,49 @@ public class UserDAOImpl implements UserDAO {
         try {
             connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);
+            List<User> users = new ArrayList<>();
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                users.add(new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        getUserStatus(rs.getInt("status")),
+                        rs.getDate("joinDate"),
+                        rs.getDate("lastActive"),
+                        getGender(rs.getInt("gender")),
+                        rs.getString("location"),
+                        getGiftType(rs.getInt("giftType")),
+                        rs.getString("interests"),
+                        rs.getInt("priceMin"),
+                        rs.getInt("priceMax")));
+            }
+
+            rs.close();
+            ps.close();
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+    
+    @Override
+    // Use User object to pass in condition parameters
+    public List<User> getUsersByAdvancedSearch(User conditionForm) {
+    	Connection connection = null;
+    	UserQueryBuilder userQueryBuilder = new UserQueryBuilder(conditionForm);
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(userQueryBuilder.build());
             List<User> users = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
