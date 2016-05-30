@@ -4,15 +4,15 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="url" value="jdbc:mysql://giftr.cbhlcja7j2ed.us-west-2.rds.amazonaws.com:3306/giftr"/>
-        <property name="username" value="developer"/>
-        <property name="password" value="giftrrocks"/>
-    </bean>
+		<property name="url" value="${mysql.url}"/>
+		<property name="username" value="${mysql.user}"/>
+		<property name="password" value="${mysql.password}"/>
+	</bean>
 
     <bean id="catalogClient" class="com.akhahaha.shopzilla.catalog.client.CatalogClientImpl">
-        <property name="publisherID" value="${catalog.pubID}"/>
-        <property name="apiKey" value="${catalog.apiKey}"/>
-    </bean>
+		<property name="publisherID" value="${catalog.pubID}"/>
+		<property name="apiKey" value="${catalog.apiKey}"/>
+	</bean>
 
     <bean id="userDAO" class="com.akhahaha.giftr.service.data.dao.UserDAOImpl">
         <property name="dataSource" ref="dataSource"/>
