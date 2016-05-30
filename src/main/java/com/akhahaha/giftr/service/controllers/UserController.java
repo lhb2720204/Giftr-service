@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,10 +42,10 @@ public class UserController {
             @RequestParam(required = false) Integer priceMin,
             @RequestParam(required = false) Integer priceMax) {
     	
-        User conditionForm = new User();
-        setUserFields(conditionForm, null, username, null, gender, location, giftType, interests, priceMin, priceMax);
+        UserQueryBuilder userQueryBuilder = new UserQueryBuilder();
+        setUserQueryBuilder(userQueryBuilder, username, gender, location, giftType, interests, priceMin, priceMax);
         List<User> users;
-        users = userDAO.getUsersByAdvancedSearch(conditionForm);
+        users = userDAO.getUsersByAdvancedSearch(userQueryBuilder);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder
@@ -203,4 +202,15 @@ public class UserController {
         if (priceMin != null) user.setPriceMin(priceMin);
         if (priceMax != null) user.setPriceMax(priceMax);
     }
+    
+	private void setUserQueryBuilder(UserQueryBuilder userQueryBuilder, String username, Integer gender, 
+							   String location, Integer giftType, String interests, Integer priceMin, Integer priceMax) {
+        if (username != null) userQueryBuilder.setUsername(username);
+        if (gender != null) userQueryBuilder.setGender(gender);
+        if (location != null) userQueryBuilder.setLocation(location);
+        if (giftType != null) userQueryBuilder.setGiftType(giftType);
+        if (interests != null) userQueryBuilder.setInterests(interests);
+        if (priceMin != null) userQueryBuilder.setPriceMin(priceMin);
+        if (priceMax != null) userQueryBuilder.setPriceMax(priceMax);
+	}
 }

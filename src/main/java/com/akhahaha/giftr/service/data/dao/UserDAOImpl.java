@@ -274,58 +274,15 @@ public class UserDAOImpl implements UserDAO {
 
         return null;
     }
-
-    @Override
-    public List<User> getAllUsers() {
-        String sql = "SELECT * FROM User";
-
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql);
-            List<User> users = new ArrayList<>();
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                users.add(new User(
-                        rs.getInt("id"),
-                        rs.getString("username"),
-                        getUserStatus(rs.getInt("status")),
-                        rs.getDate("joinDate"),
-                        rs.getDate("lastActive"),
-                        getGender(rs.getInt("gender")),
-                        rs.getString("location"),
-                        getGiftType(rs.getInt("giftType")),
-                        rs.getString("interests"),
-                        rs.getInt("priceMin"),
-                        rs.getInt("priceMax")));
-            }
-
-            rs.close();
-            ps.close();
-            return users;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return null;
-    }
     
     @Override
-    // Use User object to pass in condition parameters
-    public List<User> getUsersByAdvancedSearch(User conditionForm) {
+    public List<User> getUsersByAdvancedSearch(UserQueryBuilder userQueryBuilder) {
+    	
     	Connection connection = null;
-    	UserQueryBuilder userQueryBuilder = new UserQueryBuilder(conditionForm);
+    	
         try {
             connection = dataSource.getConnection();
-            PreparedStatement ps = connection.prepareStatement(userQueryBuilder.build());
+            PreparedStatement ps = connection.prepareStatement(userQueryBuilder.buildQuery());
             List<User> users = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -342,7 +299,6 @@ public class UserDAOImpl implements UserDAO {
                         rs.getInt("priceMin"),
                         rs.getInt("priceMax")));
             }
-
             rs.close();
             ps.close();
             return users;
