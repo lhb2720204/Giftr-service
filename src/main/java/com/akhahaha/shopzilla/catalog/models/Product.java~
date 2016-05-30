@@ -126,7 +126,7 @@ public class Product {
     	else {
     		Price dummy = new Price();
     		dummy.setValue("Check at orignal site");
-    		dummy.setIntegral(-1);
+    		dummy.setIntegral(0L);
     		return dummy;
     	}
     }
