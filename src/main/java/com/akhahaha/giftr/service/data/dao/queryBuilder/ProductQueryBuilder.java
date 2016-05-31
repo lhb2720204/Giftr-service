@@ -67,9 +67,9 @@ public class ProductQueryBuilder {
         // keyword is required
         paramMap.put("keyword", keyword);
         
-        // pagination doesn't work!
+        // pagination
         paramMap.put("start", start);
-        paramMap.put("numResults", numResults);
+        paramMap.put("results", numResults);
         
         paramMap.put("sort", sort);
         if (maxPrice != null){
