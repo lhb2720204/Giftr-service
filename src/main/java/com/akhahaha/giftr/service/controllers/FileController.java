@@ -17,12 +17,12 @@ import org.springframework.http.ResponseEntity;
 public class FileController {
 	
 	private String ROOT = "src/main/webapp/image";
-/*
-	@RequestMapping(method = RequestMethod.GET, value = "/image")
-	public String provideUploadInfo(Model model) {
-		return "uploadForm";
-	}
-*/
+
+//	@RequestMapping(method = RequestMethod.GET, value = "/image")
+//	public String provideUploadInfo(Model model) {
+//		return "uploadForm";
+//	}
+
     /**
      * Upload image
      */
@@ -43,7 +43,7 @@ public class FileController {
 		if (filename.contains("/")) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Folder separators in filename not allowed");
 		}
-		if (ext.equals("jpg") || ext.equals("JPG")) {
+		if (ext.equalsIgnoreCase("jpg")) {
 			try {
 				BufferedOutputStream stream = new BufferedOutputStream(
 						new FileOutputStream(new File(ROOT + "/" + username + ".jpg")));
