@@ -11,31 +11,32 @@ import org.springframework.security.core.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import com.akhahaha.giftr.service.data.dao.AuthenticationDAO;
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.UserDAO;
+import com.akhahaha.giftr.service.data.models.AuthenticationPair;
 import com.akhahaha.giftr.service.data.models.User;
 
 
  
 @Component
-public class CustomAuthenticationProvider implements AuthenticationProvider{
+public class GiftrAuthenticationProvider implements AuthenticationProvider{
 
-	private UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
+	private AuthenticationDAO authenticationDAO = (AuthenticationDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.AUTHENTICATION);
 	
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString().trim();
         
-        User user = userDAO.getUserByUsername(username);
+        AuthenticationPair pair = authenticationDAO.getPairByUsername(username);
    
-          if (user != null) {
-          	
-          	return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
-          } 
-          else {
-              return null;
-          }
-  }
+        if (pair != null && pair.getPassword().equals(password)) {
+        	return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
+        } 
+        else {
+        	return null;
+        }
+    }
 
     public boolean supports(Class<?> authentication) {
     	return true;

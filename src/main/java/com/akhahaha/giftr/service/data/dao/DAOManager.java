@@ -10,7 +10,7 @@ public class DAOManager {
     private static final String BEAN_CONFIGURATION_FILE = "spring.xml";
 
     public enum DAOType {
-        USER, MATCH, PRODUCT
+        USER, MATCH, PRODUCT, AUTHENTICATION
     }
 
     private final ClassPathXmlApplicationContext context;
@@ -31,6 +31,8 @@ public class DAOManager {
                 return (DAO) context.getBean("matchDAO");
             case PRODUCT:
                 return (DAO) context.getBean("productDAO");
+            case AUTHENTICATION:
+            	return (DAO) context.getBean("authenticationDAO");
             default:
                 return null;
         }

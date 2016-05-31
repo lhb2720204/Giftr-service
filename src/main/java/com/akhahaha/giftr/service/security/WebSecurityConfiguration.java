@@ -13,11 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-    private CustomAuthenticationProvider customAuthenticationProvider;
+    private GiftrAuthenticationProvider giftrAuthenticationProvider;
     
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(customAuthenticationProvider);
+        auth.authenticationProvider(giftrAuthenticationProvider);
     }
 
 

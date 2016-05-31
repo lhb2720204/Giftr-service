@@ -1,6 +1,7 @@
 package com.akhahaha.giftr.service.controllers;
 
 import com.akhahaha.giftr.service.View;
+import com.akhahaha.giftr.service.data.dao.AuthenticationDAO;
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.MatchDAO;
 import com.akhahaha.giftr.service.data.dao.UserDAO;
@@ -25,6 +26,7 @@ import java.util.List;
 public class UserController {
     private UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
     private MatchDAO matchDAO = (MatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.MATCH);
+    private AuthenticationDAO authenticationDAO = (AuthenticationDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.AUTHENTICATION);
 
     /**
      * Advanced search for users
@@ -68,7 +70,8 @@ public class UserController {
             @RequestParam(defaultValue = "1") Integer giftType,
             @RequestParam(required = false) String interests,
             @RequestParam(defaultValue = "0") Integer priceMin,
-            @RequestParam(defaultValue = "0") Integer priceMax) {
+            @RequestParam(defaultValue = "0") Integer priceMax,
+            @RequestParam(required = false) String password) {
         // TODO Validate authorization
 
         User user = new User();
@@ -77,6 +80,11 @@ public class UserController {
         Integer userID = userDAO.insertUser(user);
         if (userID == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create user.");
+        }
+        
+        if (username != null && password != null) {
+        	AuthenticationPair pair = new AuthenticationPair(username, password);
+        	authenticationDAO.insertPair(pair);
         }
 
         user = userDAO.getDetailedUser(userID);
@@ -142,7 +150,8 @@ public class UserController {
             @RequestParam(required = false) Integer giftType,
             @RequestParam(required = false) String interests,
             @RequestParam(required = false) Integer priceMin,
-            @RequestParam(required = false) Integer priceMax) {
+            @RequestParam(required = false) Integer priceMax,
+            @RequestParam(required = false) String password) {
         // TODO Validate authorization
         validateUserExists(userID);
 
@@ -150,6 +159,11 @@ public class UserController {
         setUserFields(user, userID, username, status, gender, location, giftType, interests, priceMin, priceMax);
         userDAO.updateUser(user);
         user = userDAO.getDetailedUser(userID);
+        
+        if (username != null && password != null) {
+        	AuthenticationPair pair = new AuthenticationPair(username, password);
+        	authenticationDAO.updatePair(pair);
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder
