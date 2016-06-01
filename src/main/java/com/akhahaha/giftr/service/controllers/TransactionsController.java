@@ -29,8 +29,7 @@ public class TransactionsController {
     private TransactionDAO transactionDAO = (TransactionDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.TRANSACTION);
     
     /**
-     * Advanced search for transactions
-     * If no parameter is provided, returns all transactions
+     * Search for transactions by buyer
      */
     @JsonView(View.Summary.class)
     @RequestMapping(method = RequestMethod.GET)
@@ -48,16 +47,14 @@ public class TransactionsController {
 
     }
     		
-    		
-    		
     @JsonView(View.Summary.class)
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> addTransaction(
     		@RequestParam Integer buyerID,
     		@RequestParam Integer productSource,
-    		@RequestParam Integer productSourceId,
-    		@RequestParam (required = false) Integer creditCard,
+    		@RequestParam Long productSourceId,
+    		@RequestParam (required = false) Long creditCard,
     		@RequestParam (required = false) String paypal,
     		@RequestParam (required = false) String venmo,
     		@RequestParam (required = false) String billingAddress,
@@ -66,11 +63,11 @@ public class TransactionsController {
     		@RequestParam (defaultValue = "1") Integer status
     		) {
     	if (creditCard == null && paypal == null && venmo == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create transaction. No payment options provided");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create transaction. No payment options provided.");
     	}
     	
     	Transaction transaction = new Transaction();
-    	setTransactionFields(transaction, null, productSource, productSourceId, creditCard, paypal,
+    	setTransactionFields(transaction, buyerID, productSource, productSourceId, creditCard, paypal,
     			venmo, billingAddress, shippingAddress, senderMessage, status);
     	
     	Integer transactionID = transactionDAO.insertTransaction(transaction);
@@ -110,14 +107,14 @@ public class TransactionsController {
      * Updates the specified Transaction
      */
     @JsonView(View.Detailed.class)
-    @RequestMapping(value = "/{userID}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{transactionID}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> updateTransaction(
             @PathVariable Integer transactionID,
             @RequestParam(required = false) Integer buyerID,
             @RequestParam(required = false) Integer productSource,
-            @RequestParam(required = false) Integer productSourceId,
-            @RequestParam(required = false) Integer creditCard,
+            @RequestParam(required = false) Long productSourceId,
+            @RequestParam(required = false) Long creditCard,
             @RequestParam(required = false) String paypal,
             @RequestParam(required = false) String venmo,
             @RequestParam(required = false) String billingAddress,
@@ -129,7 +126,7 @@ public class TransactionsController {
     	validateTransactionExists(transactionID);
     	
     	Transaction transaction = transactionDAO.getTransaction(transactionID);
-    	setTransactionFields(transaction, transactionID, productSource, productSourceId, creditCard, paypal, venmo,
+    	setTransactionFields(transaction, buyerID, productSource, productSourceId, creditCard, paypal, venmo,
     			billingAddress, shippingAddress, senderMessage, status);
     	transactionDAO.updateTransaction(transaction);
     	
@@ -154,10 +151,10 @@ public class TransactionsController {
     	}
     }
     
-    private void setTransactionFields(Transaction transaction, Integer transactionID, Integer productSource,
-    		Integer productSourceId, Integer creditCard, String paypal, String venmo, String billingAddress,
+    private void setTransactionFields(Transaction transaction, Integer buyerID, Integer productSource,
+    		Long productSourceId, Long creditCard, String paypal, String venmo, String billingAddress,
     		String shippingAddress, String senderMessage, Integer status) {
-    	if (transactionID != null) transaction.setId(transactionID);
+    	if (buyerID != null) transaction.setBuyerId(buyerID);
     	if (productSource != null) transaction.setProductSource(productSource);
     	if (productSourceId != null) transaction.setProductSourceId(productSourceId);
     	if (creditCard != null) transaction.setCreditCard(creditCard);

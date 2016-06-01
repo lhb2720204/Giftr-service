@@ -13,9 +13,9 @@ public class Transaction {
     @JsonView(View.Summary.class)
 	private Integer productSource;
     @JsonView(View.Summary.class)
-	private Integer productSourceId;
+	private Long productSourceId;
     @JsonView(View.Summary.class)
-	private Integer creditCard;
+	private Long creditCard;
     @JsonView(View.Summary.class)
 	private String paypal;
     @JsonView(View.Summary.class)
@@ -40,7 +40,7 @@ public class Transaction {
         lastModified = currentDate;
     }
     
-	public Transaction(Integer id, Integer buyerId, Integer productSource, Integer productSourceId, Integer creditCard,
+	public Transaction(Integer id, Integer buyerId, Integer productSource, Long productSourceId, Long creditCard,
 			String paypal, String venmo, String billingAddress, String shippingAddress, String senderMessage,
 			TransactionStatus status, Date created, Date lastModified) {
 		this.id = id;
@@ -82,19 +82,19 @@ public class Transaction {
 		this.productSource = productSource;
 	}
 	
-	public Integer getProductSourceId() {
+	public Long getProductSourceId() {
 		return productSourceId;
 	}
 	
-	public void setProductSourceId(Integer productSourceId) {
+	public void setProductSourceId(Long productSourceId) {
 		this.productSourceId = productSourceId;
 	}
 	
-	public Integer getCreditCard() {
+	public Long getCreditCard() {
 		return creditCard;
 	}
 	
-	public void setCreditCard(Integer creditCard) {
+	public void setCreditCard(Long creditCard) {
 		this.creditCard = creditCard;
 	}
 	

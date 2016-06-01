@@ -40,7 +40,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 		,"/css/style.css"
                 		,"/css/bootstrap.min.css"
                 		,"/users/signup"
-				,"/products"
+                		,"/products"
                 		).permitAll()
                 .anyRequest().authenticated()
                 .and()

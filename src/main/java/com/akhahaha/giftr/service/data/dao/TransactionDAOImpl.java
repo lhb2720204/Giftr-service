@@ -36,8 +36,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 			PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, transaction.getBuyerId());
 			ps.setInt(2, transaction.getProductSource());
-			ps.setInt(3, transaction.getProductSourceId());
-			ps.setInt(4, transaction.getCreditCard());
+			ps.setLong(3, transaction.getProductSourceId());
+			ps.setLong(4, transaction.getCreditCard());
 			ps.setString(5, transaction.getPaypal());
 			ps.setString(6, transaction.getVenmo());
 			ps.setString(7, transaction.getBillingAddress());
@@ -47,7 +47,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 			java.util.Date currentDate = new java.util.Date();
 			ps.setDate(11, new Date(currentDate.getTime()));
 			ps.setDate(12, new Date(currentDate.getTime()));
-
+            ps.executeUpdate();
+						
 			Integer id = null;
 			ResultSet rs = ps.getGeneratedKeys();
 			if (rs.next()) {
@@ -83,8 +84,8 @@ public class TransactionDAOImpl implements TransactionDAO {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, transaction.getBuyerId());
             ps.setInt(2, transaction.getProductSource());
-            ps.setInt(3, transaction.getProductSourceId());
-            ps.setInt(4, transaction.getCreditCard());
+            ps.setLong(3, transaction.getProductSourceId());
+            ps.setLong(4, transaction.getCreditCard());
             ps.setString(5, transaction.getPaypal());
             ps.setString(6, transaction.getVenmo());
             ps.setString(7, transaction.getBillingAddress());
@@ -148,8 +149,8 @@ public class TransactionDAOImpl implements TransactionDAO {
             			rs.getInt("id"),
             			rs.getInt("buyerId"),
             			rs.getInt("productSource"),
-            			rs.getInt("productSourceId"),
-            			rs.getInt("creditCard"),
+            			rs.getLong("productSourceId"),
+            			rs.getLong("creditCard"),
             			rs.getString("paypal"),
             			rs.getString("venmo"),
             			rs.getString("billingAddress"),
@@ -194,8 +195,8 @@ public class TransactionDAOImpl implements TransactionDAO {
             			rs.getInt("id"),
             			rs.getInt("buyerId"),
             			rs.getInt("productSource"),
-            			rs.getInt("productSourceId"),
-            			rs.getInt("creditCard"),
+            			rs.getLong("productSourceId"),
+            			rs.getLong("creditCard"),
             			rs.getString("paypal"),
             			rs.getString("venmo"),
             			rs.getString("billingAddress"),
@@ -238,7 +239,7 @@ public class TransactionDAOImpl implements TransactionDAO {
             if (rs.next()) {
             	transactionStatus = new TransactionStatus(rs.getInt("id"), rs.getString("name"));
             }
-
+            
             rs.close();
             ps.close();
             return transactionStatus;

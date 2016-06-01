@@ -1,12 +1,17 @@
 package com.akhahaha.giftr.service.data.models;
 
+import com.akhahaha.giftr.service.View;
+import com.fasterxml.jackson.annotation.JsonView;
+
 public class TransactionStatus {
     public static final TransactionStatus PENDING = new TransactionStatus(1, "Pending");
     public static final TransactionStatus PLACED = new TransactionStatus(2, "Placed");
     public static final TransactionStatus SHIPPED = new TransactionStatus(3, "Shipped");
     public static final TransactionStatus DELIVERED = new TransactionStatus(4, "Delivered");
     
+    @JsonView(View.Summary.class)
     private Integer id;
+    @JsonView(View.Summary.class)
     private String name;
     
     public TransactionStatus() {
