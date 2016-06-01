@@ -42,13 +42,15 @@ public class UserController {
             @RequestParam(required = false) Integer giftType,
             @RequestParam(required = false) String interests,
             @RequestParam(required = false) Integer priceMin,
-            @RequestParam(required = false) Integer priceMax) {
+            @RequestParam(required = false) Integer priceMax,
+            @RequestParam(required = false) Integer start,
+            @RequestParam(required = false) Integer numResults) {
     	
         UserQueryBuilder userQueryBuilder = new UserQueryBuilder();
-        setUserQueryBuilder(userQueryBuilder, username, gender, location, giftType, interests, priceMin, priceMax);
+        setUserQueryBuilder(userQueryBuilder, username, gender, location, giftType,
+                interests, priceMin, priceMax, start, numResults);
         List<User> users;
         users = userDAO.getUsersByAdvancedSearch(userQueryBuilder);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -218,7 +220,8 @@ public class UserController {
     }
     
 	private void setUserQueryBuilder(UserQueryBuilder userQueryBuilder, String username, Integer gender, 
-							   String location, Integer giftType, String interests, Integer priceMin, Integer priceMax) {
+							   String location, Integer giftType, String interests, Integer priceMin, Integer priceMax,
+                                     Integer start, Integer numResults) {
         if (username != null) userQueryBuilder.setUsername(username);
         if (gender != null) userQueryBuilder.setGender(gender);
         if (location != null) userQueryBuilder.setLocation(location);
@@ -226,5 +229,7 @@ public class UserController {
         if (interests != null) userQueryBuilder.setInterests(interests);
         if (priceMin != null) userQueryBuilder.setPriceMin(priceMin);
         if (priceMax != null) userQueryBuilder.setPriceMax(priceMax);
+        if (start != null) userQueryBuilder.setStart(start);
+        if (numResults != null) userQueryBuilder.setNumResults(numResults);
 	}
 }
