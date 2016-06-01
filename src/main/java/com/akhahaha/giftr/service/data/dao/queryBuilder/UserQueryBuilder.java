@@ -9,10 +9,14 @@ public class UserQueryBuilder {
 	private String interests;
 	private Integer priceMin;
 	private Integer priceMax;
+	private Integer start;
+	private Integer numResults;
 	
 	public UserQueryBuilder() {
 		gender = 1;
 		giftType = 1;
+//		start = 0;
+//		numResults = 10;
 	}
 	
 	public UserQueryBuilder setUsername(String username) {
@@ -49,6 +53,16 @@ public class UserQueryBuilder {
 		this.priceMax = priceMax;
 		return this;
 	}
+
+	public UserQueryBuilder setStart(Integer start) {
+		this.start = start;
+		return this;
+	}
+
+	public UserQueryBuilder setNumResults(Integer numResults) {
+		this.numResults = numResults;
+		return this;
+	}
 	
 	public String buildQuery() {
 		String usernameCond = username!=null ? " AND username='" + username + "'" : "";
@@ -59,6 +73,8 @@ public class UserQueryBuilder {
 				               " AND interests LIKE CONCAT('%','" + interests + "','%')" : "";
 		String priceMinCond = priceMin!=null ? " AND priceMin <=" + Integer.toString(priceMin) : "";
 		String priceMaxCond = priceMax!=null ? " AND priceMax >=" + Integer.toString(priceMax) : "";
+		String listNumCond = (numResults!=null && start!=null) ? " LIMIT " + Integer.toString(start) + ", "
+				+ Integer.toString(numResults) : "";
 		
 		return "SELECT * FROM User WHERE status<>3"
 				+ usernameCond
@@ -67,6 +83,7 @@ public class UserQueryBuilder {
 				+ giftTypeCond
 				+ interestsCond
 				+ priceMinCond
-				+ priceMaxCond;
+				+ priceMaxCond
+				+ listNumCond;
 	}
 }
