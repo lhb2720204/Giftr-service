@@ -17,6 +17,7 @@ public class User {
     private String username;
     @JsonView(View.Summary.class)
     private UserStatus status;
+    @JsonView(View.Summary.class)
     private Date joinDate;
     @JsonView(View.Summary.class)
     private Date lastActive;
