@@ -2,9 +2,13 @@ package com.akhahaha.giftr.service.controllers;
 
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.MatchDAO;
+import com.akhahaha.giftr.service.data.dao.PendingMatchDAO;
 import com.akhahaha.giftr.service.data.dao.UserDAO;
+import com.akhahaha.giftr.service.data.models.GiftType;
 import com.akhahaha.giftr.service.data.models.Match;
 import com.akhahaha.giftr.service.data.models.MatchStatus;
+import com.akhahaha.giftr.service.data.models.PendingMatch;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +27,7 @@ import java.util.List;
 public class MatchController {
     private UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
     private MatchDAO matchDAO = (MatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.MATCH);
+    private PendingMatchDAO pendingMatchDAO = (PendingMatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.PENDINGMATCH);
 
     /**
      * Searches on all matches
@@ -134,6 +139,32 @@ public class MatchController {
                 .fromCurrentRequest()
                 .buildAndExpand(matchID).toUri());
         return new ResponseEntity<>(match, headers, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/pending", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> attemptMatch(
+    		@RequestParam Integer userID,
+			@RequestParam Integer giftType,
+			@RequestParam Integer priceMin,
+			@RequestParam Integer priceMax) {
+    	PendingMatch pendingMatch = pendingMatchDAO.searchPendingMatches(giftType, priceMin, priceMax);
+    	
+    	if (pendingMatch != null && userID != pendingMatch.getUserID()) {
+    		pendingMatchDAO.deletePendingMatch(pendingMatch.getId());
+    		return createMatch(1, priceMin, priceMax, userID, pendingMatch.getUserID(), 0, 0);
+    	}
+
+    	if (pendingMatch == null || userID != pendingMatch.getUserID()) {
+    		pendingMatch = new PendingMatch();
+    		pendingMatch.setUserID(userID);
+    		pendingMatch.setGiftType(new GiftType(giftType));
+    		pendingMatch.setPriceMin(priceMin);
+    		pendingMatch.setPriceMax(priceMax);
+    		pendingMatchDAO.insertPendingMatch(pendingMatch);
+    	}
+    	
+    	return null;
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
