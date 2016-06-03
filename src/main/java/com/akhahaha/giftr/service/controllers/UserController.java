@@ -65,7 +65,7 @@ public class UserController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> addUser(
-            @RequestParam(required = false) String username,
+            @RequestParam String username,
             @RequestParam(defaultValue = "1") Integer status,
             @RequestParam(defaultValue = "1") Integer gender,
             @RequestParam(required = false) String location,
@@ -73,11 +73,12 @@ public class UserController {
             @RequestParam(required = false) String interests,
             @RequestParam(defaultValue = "0") Integer priceMin,
             @RequestParam(defaultValue = "0") Integer priceMax,
-            @RequestParam(required = false) String password) {
+            @RequestParam(required = false) String email,
+            @RequestParam String password) {
         // TODO Validate authorization
 
         User user = new User();
-        setUserFields(user, null, username, status, gender, location, giftType, interests, priceMin, priceMax);
+        setUserFields(user, null, username, status, gender, location, giftType, interests, priceMin, priceMax, email);
 
         Integer userID = userDAO.insertUser(user);
         if (userID == null) {
@@ -153,12 +154,13 @@ public class UserController {
             @RequestParam(required = false) String interests,
             @RequestParam(required = false) Integer priceMin,
             @RequestParam(required = false) Integer priceMax,
+            @RequestParam(required = false) String email,
             @RequestParam(required = false) String password) {
         // TODO Validate authorization
         validateUserExists(userID);
 
         User user = userDAO.getUser(userID);
-        setUserFields(user, userID, username, status, gender, location, giftType, interests, priceMin, priceMax);
+        setUserFields(user, userID, username, status, gender, location, giftType, interests, priceMin, priceMax, email);
         userDAO.updateUser(user);
         user = userDAO.getDetailedUser(userID);
         
@@ -206,8 +208,8 @@ public class UserController {
         }
     }
 
-    private void setUserFields(User user, Integer userID, String username, Integer status, Integer gender,
-                               String location, Integer giftType, String interests, Integer priceMin, Integer priceMax) {
+    private void setUserFields(User user, Integer userID, String username, Integer status, Integer gender, String location,
+                               Integer giftType, String interests, Integer priceMin, Integer priceMax, String email) {
         if (userID != null) user.setId(userID);
         if (username != null) user.setUsername(username);
         if (status != null) user.setStatus(new UserStatus(status));
@@ -217,6 +219,7 @@ public class UserController {
         if (interests != null) user.setInterests(interests);
         if (priceMin != null) user.setPriceMin(priceMin);
         if (priceMax != null) user.setPriceMax(priceMax);
+        if (email != null) user.setEmail(email);
     }
     
 	private void setUserQueryBuilder(UserQueryBuilder userQueryBuilder, String username, Integer gender, 

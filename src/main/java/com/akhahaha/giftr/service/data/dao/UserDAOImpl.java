@@ -27,8 +27,8 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Integer insertUser(User user) {
         String sql = "INSERT INTO User (username, status, joinDate, lastActive, gender, location, " +
-                "giftType, interests, priceMin, priceMax) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "giftType, interests, priceMin, priceMax, email) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection connection = null;
         try {
@@ -45,6 +45,7 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(8, user.getInterests());
             ps.setInt(9, user.getPriceMin());
             ps.setInt(10, user.getPriceMax());
+            ps.setString(11, user.getEmail());
             ps.executeUpdate();
 
             Integer id = null;
@@ -74,7 +75,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public void updateUser(User user) {
         String sql = "UPDATE User SET username = ?, status = ?, lastActive = ?, gender = ?, location = ?," +
-                "giftType = ?, interests = ?, priceMin = ?, priceMax = ? WHERE id = ?";
+                "giftType = ?, interests = ?, priceMin = ?, priceMax = ?, email = ? WHERE id = ?";
 
         Connection connection = null;
         try {
@@ -89,7 +90,8 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(7, user.getInterests());
             ps.setInt(8, user.getPriceMin());
             ps.setInt(9, user.getPriceMax());
-            ps.setInt(10, user.getId());
+            ps.setString(10, user.getEmail());
+            ps.setInt(11, user.getId());
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -152,7 +154,8 @@ public class UserDAOImpl implements UserDAO {
                         getGiftType(rs.getInt("giftType")),
                         rs.getString("interests"),
                         rs.getInt("priceMin"),
-                        rs.getInt("priceMax"));
+                        rs.getInt("priceMax"),
+                        rs.getString("email"));
             }
 
             rs.close();
@@ -196,7 +199,8 @@ public class UserDAOImpl implements UserDAO {
                         getGiftType(rs.getInt("giftType")),
                         rs.getString("interests"),
                         rs.getInt("priceMin"),
-                        rs.getInt("priceMax"));
+                        rs.getInt("priceMax"),
+                        rs.getString("email"));
             }
 
             rs.close();
@@ -240,7 +244,8 @@ public class UserDAOImpl implements UserDAO {
                         getGiftType(rs.getInt("giftType")),
                         rs.getString("interests"),
                         rs.getInt("priceMin"),
-                        rs.getInt("priceMax"));
+                        rs.getInt("priceMax"),
+                        rs.getString("email"));
                 rs.close();
                 ps.close();
 
@@ -297,7 +302,8 @@ public class UserDAOImpl implements UserDAO {
                         getGiftType(rs.getInt("giftType")),
                         rs.getString("interests"),
                         rs.getInt("priceMin"),
-                        rs.getInt("priceMax")));
+                        rs.getInt("priceMax"),
+                        rs.getString("email")));
             }
             rs.close();
             ps.close();
