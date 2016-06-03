@@ -79,6 +79,10 @@ public class UserController {
 
         User user = new User();
         setUserFields(user, null, username, status, gender, location, giftType, interests, priceMin, priceMax, email);
+        
+        if (username.isEmpty() || password.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create user.");        	
+        }
 
         Integer userID = userDAO.insertUser(user);
         if (userID == null) {
