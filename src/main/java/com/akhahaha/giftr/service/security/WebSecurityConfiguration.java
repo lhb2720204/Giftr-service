@@ -29,27 +29,21 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/"
                 		,"/index.html"
                 		,"/signup.html"
-                		,"/assets/phone1.png"
-                		,"/assets/phone2.png"
-                		,"/assets/phone3.png"
-                		,"/assets/phone4.png"
-                		,"/assets/phone5.png"
-                		,"/assets/phone6.png"
-                		,"/assets/phone7.png"
-                		,"/assets/giftrlogo.svg"
-                		,"/css/style.css"
-                		,"/css/bootstrap.min.css"
+                		,"/assets/**"
+                		,"/css/**"
+                		,"/fonts/**"
+                		,"/js/**"
                 		,"/users/signup"
-                		,"/products"
                 		).permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
-                .loginPage("/login.html")
+                .loginPage("/")
+                .defaultSuccessUrl("/about_me.html", true)
                 .permitAll()
                 .and()
             .logout()
-    			.logoutSuccessUrl("/login.html") 
+    			.logoutSuccessUrl("/") 
                 .permitAll()
                 .and()
             .csrf()
