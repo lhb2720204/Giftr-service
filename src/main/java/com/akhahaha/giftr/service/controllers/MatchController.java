@@ -1,5 +1,20 @@
 package com.akhahaha.giftr.service.controllers;
 
+import java.util.List;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.MatchDAO;
 import com.akhahaha.giftr.service.data.dao.PendingMatchDAO;
@@ -8,14 +23,6 @@ import com.akhahaha.giftr.service.data.models.GiftType;
 import com.akhahaha.giftr.service.data.models.Match;
 import com.akhahaha.giftr.service.data.models.MatchStatus;
 import com.akhahaha.giftr.service.data.models.PendingMatch;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.List;
 
 /**
  * Match service controller
@@ -141,7 +148,7 @@ public class MatchController {
         return new ResponseEntity<>(match, headers, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/pending", method = RequestMethod.POST)
+    @RequestMapping(value = "/attempt", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> attemptMatch(
     		@RequestParam Integer userID,
