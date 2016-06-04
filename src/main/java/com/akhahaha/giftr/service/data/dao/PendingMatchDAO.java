@@ -15,6 +15,8 @@ public interface PendingMatchDAO extends DAO {
 	PendingMatch getPendingMatch(Integer pendingMatchID);
 	
 	PendingMatch searchPendingMatches(Integer giftType, Integer priceMin, Integer priceMax);
+	
+	List<PendingMatch> findPendingMatchesByUser(Integer userID);
 
 	GiftType getGiftType(Integer giftTypeID);
 }

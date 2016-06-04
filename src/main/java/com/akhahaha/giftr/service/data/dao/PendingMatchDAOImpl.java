@@ -192,6 +192,44 @@ public class PendingMatchDAOImpl implements PendingMatchDAO {
 	}
 
 	@Override
+	public List<PendingMatch> findPendingMatchesByUser(Integer userID) {
+		String sql = "SELECT * FROM PendingMatch WHERE userId = ?";
+        Connection connection = null;
+
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userID);
+            List<PendingMatch> pendingMatches = new ArrayList<>();
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+            	pendingMatches.add(new PendingMatch(
+            			rs.getInt("id"),
+            			rs.getInt("userId"),
+            			getGiftType(rs.getInt("giftType")),
+            			rs.getInt("priceMin"),
+            			rs.getInt("priceMax")));
+            }
+
+            rs.close();
+            ps.close();
+            return pendingMatches;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+		return null;
+	}
+	
+	@Override
     public GiftType getGiftType(Integer giftTypeID) {
         String sql = "SELECT * FROM GiftType WHERE id = ?";
 

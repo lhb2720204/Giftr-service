@@ -1,21 +1,36 @@
 package com.akhahaha.giftr.service.controllers;
 
+import java.security.Principal;
+import java.util.List;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import com.akhahaha.giftr.service.View;
 import com.akhahaha.giftr.service.data.dao.AuthenticationDAO;
 import com.akhahaha.giftr.service.data.dao.DAOManager;
 import com.akhahaha.giftr.service.data.dao.MatchDAO;
+import com.akhahaha.giftr.service.data.dao.PendingMatchDAO;
 import com.akhahaha.giftr.service.data.dao.UserDAO;
 import com.akhahaha.giftr.service.data.dao.queryBuilder.UserQueryBuilder;
-import com.akhahaha.giftr.service.data.models.*;
+import com.akhahaha.giftr.service.data.models.AuthenticationPair;
+import com.akhahaha.giftr.service.data.models.Gender;
+import com.akhahaha.giftr.service.data.models.GiftType;
+import com.akhahaha.giftr.service.data.models.Match;
+import com.akhahaha.giftr.service.data.models.PendingMatch;
+import com.akhahaha.giftr.service.data.models.User;
+import com.akhahaha.giftr.service.data.models.UserStatus;
 import com.fasterxml.jackson.annotation.JsonView;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.security.Principal;
-import java.util.List;
 
 /**
  * User service controller
@@ -26,6 +41,7 @@ import java.util.List;
 public class UserController {
     private UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
     private MatchDAO matchDAO = (MatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.MATCH);
+    private PendingMatchDAO pendingMatchDAO = (PendingMatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.PENDINGMATCH);
     private AuthenticationDAO authenticationDAO = (AuthenticationDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.AUTHENTICATION);
 
     /**
@@ -75,7 +91,6 @@ public class UserController {
             @RequestParam(defaultValue = "0") Integer priceMax,
             @RequestParam(required = false) String email,
             @RequestParam String password) {
-        // TODO Validate authorization
 
         User user = new User();
         setUserFields(user, null, username, status, gender, location, giftType, interests, priceMin, priceMax, email);
@@ -111,7 +126,6 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> getUser(
             @PathVariable Integer userID) {
-        // TODO Validate authorization
         validateUserExists(userID);
 
         User user = userDAO.getDetailedUser(userID);
@@ -160,7 +174,6 @@ public class UserController {
             @RequestParam(required = false) Integer priceMax,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String password) {
-        // TODO Validate authorization
         validateUserExists(userID);
 
         User user = userDAO.getUser(userID);
@@ -187,7 +200,6 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> getUserMatches(
             @PathVariable Integer userID) {
-        // TODO Validate authorization
         validateUserExists(userID);
 
         List<Match> matches = matchDAO.findMatchesByUser(userID);
@@ -197,6 +209,21 @@ public class UserController {
                 .fromCurrentRequest()
                 .buildAndExpand().toUri());
         return new ResponseEntity<>(matches, headers, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/{userID}/pendingmatches", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getUserPendingMatches(
+            @PathVariable Integer userID) {
+        validateUserExists(userID);
+
+        List<PendingMatch> pendingMatches = pendingMatchDAO.findPendingMatchesByUser(userID);
+        		
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand().toUri());
+        return new ResponseEntity<>(pendingMatches, headers, HttpStatus.OK);
     }
 
     private void validateUserExists(Integer userID) {

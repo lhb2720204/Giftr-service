@@ -74,7 +74,8 @@ public class MatchController {
             @RequestParam Integer user1ID,
             @RequestParam Integer user2ID,
             @RequestParam(defaultValue = "0") Integer user1Transaction,
-            @RequestParam(defaultValue = "0") Integer user2Transaction) {
+            @RequestParam(defaultValue = "0") Integer user2Transaction,
+            @RequestParam(defaultValue = "1") Integer giftType) {
 
         if (userDAO.getUser(user1ID) == null || userDAO.getUser(user2ID) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Match Users not found");
@@ -82,7 +83,7 @@ public class MatchController {
 
         Match match = new Match(user1ID, user2ID);
         setMatchFields(match, null, status, priceMin, priceMax, user1ID, user2ID,
-                user1Transaction, user2Transaction);
+                user1Transaction, user2Transaction, giftType);
 
         Integer matchID = matchDAO.insertMatch(match);
         match = matchDAO.getMatch(matchID);
@@ -125,7 +126,8 @@ public class MatchController {
             @RequestParam(required = false) Integer priceMin,
             @RequestParam(required = false) Integer priceMax,
             @RequestParam(required = false) Integer user1Transaction,
-            @RequestParam(required = false) Integer user2Transaction) {
+            @RequestParam(required = false) Integer user2Transaction,
+            @RequestParam(required = false) Integer giftType) {
 
         Match match = matchDAO.getMatch(matchID);
         if (match == null) {
@@ -133,7 +135,7 @@ public class MatchController {
         }
 
         setMatchFields(match, matchID, status, priceMin, priceMax, null, null,
-                user1Transaction, user2Transaction);
+                user1Transaction, user2Transaction, giftType);
         matchDAO.updateMatch(match);
         match = matchDAO.getMatch(matchID);
 
@@ -160,7 +162,7 @@ public class MatchController {
     		
             match = new Match(userID, pendingMatch.getUserID());
             setMatchFields(match, null, 1, priceMin, priceMax, userID, pendingMatch.getUserID(),
-                    0, 0);
+                    0, 0, giftType);
 
             Integer matchID = matchDAO.insertMatch(match);
             match = matchDAO.getMatch(matchID);
@@ -189,8 +191,9 @@ public class MatchController {
         }
     }
 
-    private void setMatchFields(Match match, Integer matchID, Integer status, Integer priceMin, Integer priceMax,
-                                Integer user1ID, Integer user2ID, Integer user1Transaction, Integer user2Transaction) {
+    private void setMatchFields(Match match, Integer matchID, Integer status, Integer priceMin,
+    							Integer priceMax,Integer user1ID, Integer user2ID, Integer user1Transaction,
+                                Integer user2Transaction, Integer giftType) {
         if (matchID != null) match.setId(matchID);
         if (status != null) match.setStatus(new MatchStatus(status));
         if (priceMin != null) match.setPriceMin(priceMin);
@@ -199,5 +202,6 @@ public class MatchController {
         if (user2ID != null) match.setUser2ID(user2ID);
         if (user1Transaction != null) match.setUser1Transaction(user1Transaction);
         if (user2Transaction != null) match.setUser2Transaction(user2Transaction);
+        if (giftType != null) match.setGiftType(new GiftType(giftType));
     }
 }
