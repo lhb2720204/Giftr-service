@@ -1,17 +1,28 @@
 package com.akhahaha.giftr.service.controllers;
 
-import com.akhahaha.giftr.service.data.dao.DAOManager;
-import com.akhahaha.giftr.service.data.dao.MatchDAO;
-import com.akhahaha.giftr.service.data.dao.UserDAO;
-import com.akhahaha.giftr.service.data.models.Match;
-import com.akhahaha.giftr.service.data.models.MatchStatus;
+import java.util.List;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.List;
+import com.akhahaha.giftr.service.data.dao.DAOManager;
+import com.akhahaha.giftr.service.data.dao.MatchDAO;
+import com.akhahaha.giftr.service.data.dao.PendingMatchDAO;
+import com.akhahaha.giftr.service.data.dao.UserDAO;
+import com.akhahaha.giftr.service.data.models.GiftType;
+import com.akhahaha.giftr.service.data.models.Match;
+import com.akhahaha.giftr.service.data.models.MatchStatus;
+import com.akhahaha.giftr.service.data.models.PendingMatch;
 
 /**
  * Match service controller
@@ -23,6 +34,7 @@ import java.util.List;
 public class MatchController {
     private UserDAO userDAO = (UserDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.USER);
     private MatchDAO matchDAO = (MatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.MATCH);
+    private PendingMatchDAO pendingMatchDAO = (PendingMatchDAO) DAOManager.getInstance().getDAO(DAOManager.DAOType.PENDINGMATCH);
 
     /**
      * Searches on all matches
@@ -31,7 +43,6 @@ public class MatchController {
     @ResponseBody
     public ResponseEntity<?> getAllMatches(
             @RequestParam(value = "userID[]", required = false) Integer[] userIDs) {
-        // TODO Validate authorization
 
         List<Match> matches;
         if (userIDs == null || userIDs.length == 0) {
@@ -64,7 +75,6 @@ public class MatchController {
             @RequestParam Integer user2ID,
             @RequestParam(defaultValue = "0") Integer user1Transaction,
             @RequestParam(defaultValue = "0") Integer user2Transaction) {
-        // TODO Validate authorization
 
         if (userDAO.getUser(user1ID) == null || userDAO.getUser(user2ID) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Match Users not found");
@@ -91,7 +101,6 @@ public class MatchController {
     @ResponseBody
     public ResponseEntity<?> getMatch(
             @PathVariable Integer matchID) {
-        // TODO Validate authorization
 
         Match match = matchDAO.getMatch(matchID);
         if (match == null) {
@@ -117,7 +126,6 @@ public class MatchController {
             @RequestParam(required = false) Integer priceMax,
             @RequestParam(required = false) Integer user1Transaction,
             @RequestParam(required = false) Integer user2Transaction) {
-        // TODO Validate authorization
 
         Match match = matchDAO.getMatch(matchID);
         if (match == null) {
@@ -134,6 +142,44 @@ public class MatchController {
                 .fromCurrentRequest()
                 .buildAndExpand(matchID).toUri());
         return new ResponseEntity<>(match, headers, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/attempt", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> attemptMatch(
+    		@RequestParam Integer userID,
+			@RequestParam Integer giftType,
+			@RequestParam Integer priceMin,
+			@RequestParam Integer priceMax) {
+    	PendingMatch pendingMatch = pendingMatchDAO.searchPendingMatches(giftType, priceMin, priceMax);
+    	
+    	Match match = new Match();
+    	
+    	if (pendingMatch != null && userID != pendingMatch.getUserID()) {
+    		pendingMatchDAO.deletePendingMatch(pendingMatch.getId());
+    		
+            match = new Match(userID, pendingMatch.getUserID());
+            setMatchFields(match, null, 1, priceMin, priceMax, userID, pendingMatch.getUserID(),
+                    0, 0);
+
+            Integer matchID = matchDAO.insertMatch(match);
+            match = matchDAO.getMatch(matchID);
+    	}
+    	else if (pendingMatch == null || userID != pendingMatch.getUserID()) {
+    		pendingMatch = new PendingMatch();
+    		pendingMatch.setUserID(userID);
+    		pendingMatch.setGiftType(new GiftType(giftType));
+    		pendingMatch.setPriceMin(priceMin);
+    		pendingMatch.setPriceMax(priceMax);
+    		pendingMatchDAO.insertPendingMatch(pendingMatch);
+    	}
+    	
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand().toUri());
+        return new ResponseEntity<>(match, headers, HttpStatus.OK);
+
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -17,6 +17,7 @@ public class User {
     private String username;
     @JsonView(View.Summary.class)
     private UserStatus status;
+    @JsonView(View.Summary.class)
     private Date joinDate;
     @JsonView(View.Summary.class)
     private Date lastActive;
@@ -32,6 +33,8 @@ public class User {
     private Integer priceMin;
     @JsonView(View.Summary.class)
     private Integer priceMax;
+    @JsonView(View.Detailed.class)
+    private String email;
     @JsonView(View.Detailed.class)
     private List<Integer> matches;
 
@@ -50,7 +53,7 @@ public class User {
     }
 
     public User(Integer id, String username, UserStatus status, Date joinDate, Date lastActive, Gender gender, String location,
-                GiftType giftType, String interests, Integer priceMin, Integer priceMax) {
+                GiftType giftType, String interests, Integer priceMin, Integer priceMax, String email) {
         this.id = id;
         this.username = username;
         this.status = status;
@@ -62,6 +65,7 @@ public class User {
         this.interests = interests;
         this.priceMin = priceMin;
         this.priceMax = priceMax;
+        this.email = email;
     }
 
     public Integer getId() {
@@ -152,7 +156,15 @@ public class User {
         this.priceMax = priceMax;
     }
 
-    public List<Integer> getMatches() {
+    public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public List<Integer> getMatches() {
         return matches;
     }
 

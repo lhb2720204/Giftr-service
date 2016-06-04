@@ -1,5 +1,6 @@
 package com.akhahaha.giftr.service.data.dao;
 
+import com.akhahaha.giftr.service.data.dao.queryBuilder.ProductQueryBuilder;
 import com.akhahaha.giftr.service.data.models.Product;
 import com.akhahaha.giftr.service.data.models.ProductSource;
 import com.akhahaha.shopzilla.catalog.client.CatalogClient;
@@ -7,6 +8,7 @@ import com.akhahaha.shopzilla.catalog.models.Image;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -23,9 +25,11 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
-    public List<Product> searchProductsByKeyword(String keyword) {
+    public List<Product> searchProductsByAdvancedSearch(ProductQueryBuilder productQueryBuilder) {
         // Get Shopzilla products
-        return catalogClient.searchProductsByKeyword(keyword).stream().map(catalogProductToProduct)
+        return catalogClient.searchProductsByAdvancedSearch(productQueryBuilder)
+        		.stream()
+        		.map(catalogProductToProduct)
                 .collect(Collectors.toList());
     }
 
@@ -41,5 +45,5 @@ public class ProductDAOImpl implements ProductDAO {
                     catalogProduct.getDescription(),
                     catalogProduct.getUrl().getValue(),
                     catalogProduct.getImages().getImages().stream().map(Image::getValue).collect(Collectors.toList()),
-                    catalogProduct.getPrice().getIntegral());
+                    catalogProduct.getPrice().getIntegral().intValue());
 }

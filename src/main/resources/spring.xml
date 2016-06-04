@@ -22,7 +22,19 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="pendingMatchDAO" class="com.akhahaha.giftr.service.data.dao.PendingMatchDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <bean id="productDAO" class="com.akhahaha.giftr.service.data.dao.ProductDAOImpl">
         <property name="catalogClient" ref="catalogClient"/>
+    </bean>
+	
+    <bean id="authenticationDAO" class="com.akhahaha.giftr.service.data.dao.AuthenticationDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+	
+    <bean id="transactionDAO" class="com.akhahaha.giftr.service.data.dao.TransactionDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 </beans>
