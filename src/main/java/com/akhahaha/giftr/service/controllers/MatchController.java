@@ -43,7 +43,6 @@ public class MatchController {
     @ResponseBody
     public ResponseEntity<?> getAllMatches(
             @RequestParam(value = "userID[]", required = false) Integer[] userIDs) {
-        // TODO Validate authorization
 
         List<Match> matches;
         if (userIDs == null || userIDs.length == 0) {
@@ -76,7 +75,6 @@ public class MatchController {
             @RequestParam Integer user2ID,
             @RequestParam(defaultValue = "0") Integer user1Transaction,
             @RequestParam(defaultValue = "0") Integer user2Transaction) {
-        // TODO Validate authorization
 
         if (userDAO.getUser(user1ID) == null || userDAO.getUser(user2ID) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Match Users not found");
@@ -103,7 +101,6 @@ public class MatchController {
     @ResponseBody
     public ResponseEntity<?> getMatch(
             @PathVariable Integer matchID) {
-        // TODO Validate authorization
 
         Match match = matchDAO.getMatch(matchID);
         if (match == null) {
@@ -129,7 +126,6 @@ public class MatchController {
             @RequestParam(required = false) Integer priceMax,
             @RequestParam(required = false) Integer user1Transaction,
             @RequestParam(required = false) Integer user2Transaction) {
-        // TODO Validate authorization
 
         Match match = matchDAO.getMatch(matchID);
         if (match == null) {
@@ -157,12 +153,19 @@ public class MatchController {
 			@RequestParam Integer priceMax) {
     	PendingMatch pendingMatch = pendingMatchDAO.searchPendingMatches(giftType, priceMin, priceMax);
     	
+    	Match match = new Match();
+    	
     	if (pendingMatch != null && userID != pendingMatch.getUserID()) {
     		pendingMatchDAO.deletePendingMatch(pendingMatch.getId());
-    		return createMatch(1, priceMin, priceMax, userID, pendingMatch.getUserID(), 0, 0);
-    	}
+    		
+            match = new Match(userID, pendingMatch.getUserID());
+            setMatchFields(match, null, 1, priceMin, priceMax, userID, pendingMatch.getUserID(),
+                    0, 0);
 
-    	if (pendingMatch == null || userID != pendingMatch.getUserID()) {
+            Integer matchID = matchDAO.insertMatch(match);
+            match = matchDAO.getMatch(matchID);
+    	}
+    	else if (pendingMatch == null || userID != pendingMatch.getUserID()) {
     		pendingMatch = new PendingMatch();
     		pendingMatch.setUserID(userID);
     		pendingMatch.setGiftType(new GiftType(giftType));
@@ -171,7 +174,12 @@ public class MatchController {
     		pendingMatchDAO.insertPendingMatch(pendingMatch);
     	}
     	
-    	return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand().toUri());
+        return new ResponseEntity<>(match, headers, HttpStatus.OK);
+
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
