@@ -1,13 +1,21 @@
 package com.akhahaha.giftr.service.data.dao;
 
-import com.akhahaha.giftr.service.data.models.Match;
-import com.akhahaha.giftr.service.data.models.MatchStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.akhahaha.giftr.service.data.models.GiftType;
+import com.akhahaha.giftr.service.data.models.Match;
+import com.akhahaha.giftr.service.data.models.MatchStatus;
 
 /**
  * MatchDAO JDBC Implementation
@@ -24,8 +32,8 @@ public class MatchDAOImpl implements MatchDAO {
     @Override
     public Integer insertMatch(Match match) {
         String sql = "INSERT INTO `Match` (status, created, lastModified, priceMin, priceMax, " +
-                "user1, user2, user1Transaction, user2Transaction) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "user1, user2, user1Transaction, user2Transaction, giftType) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         Connection connection = null;
         try {
@@ -40,6 +48,7 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setInt(7, match.getUser2ID());
             ps.setInt(8, match.getUser1Transaction());
             ps.setInt(9, match.getUser2Transaction());
+            ps.setInt(10,  match.getGiftType().getId());
             ps.executeUpdate();
 
             Integer id = null;
@@ -69,7 +78,7 @@ public class MatchDAOImpl implements MatchDAO {
     @Override
     public void updateMatch(Match match) {
         String sql = "UPDATE `Match` SET status = ?, lastModified = ?, priceMin = ?, priceMax = ?, " +
-                "user1Transaction = ?, user2Transaction = ? WHERE id = ?";
+                "user1Transaction = ?, user2Transaction = ?, giftType = ? WHERE id = ?";
 
         Connection connection = null;
         try {
@@ -81,7 +90,8 @@ public class MatchDAOImpl implements MatchDAO {
             ps.setInt(4, match.getPriceMax());
             ps.setInt(5, match.getUser1Transaction());
             ps.setInt(6, match.getUser2Transaction());
-            ps.setInt(7, match.getId());
+            ps.setInt(7, match.getGiftType().getId());
+            ps.setInt(8, match.getId());
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -143,7 +153,8 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getInt("user1Transaction"),
-                        rs.getInt("user2Transaction"));
+                        rs.getInt("user2Transaction"),
+                        getGiftType(rs.getInt("giftType")));
             }
 
             rs.close();
@@ -185,7 +196,8 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getInt("user1Transaction"),
-                        rs.getInt("user2Transaction")));
+                        rs.getInt("user2Transaction"),
+                        getGiftType(rs.getInt("giftType"))));
             }
 
             rs.close();
@@ -229,8 +241,9 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getInt("user1Transaction"),
-                        rs.getInt("user2Transaction")));
-            }
+                        rs.getInt("user2Transaction"),
+                        getGiftType(rs.getInt("giftType"))));
+           }
 
             rs.close();
             ps.close();
@@ -275,7 +288,8 @@ public class MatchDAOImpl implements MatchDAO {
                         rs.getInt("user1"),
                         rs.getInt("user2"),
                         rs.getInt("user1Transaction"),
-                        rs.getInt("user2Transaction")));
+                        rs.getInt("user2Transaction"),
+                        getGiftType(rs.getInt("giftType"))));
             }
 
             rs.close();
@@ -315,6 +329,40 @@ public class MatchDAOImpl implements MatchDAO {
             rs.close();
             ps.close();
             return matchStatus;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+    
+	@Override
+    public GiftType getGiftType(Integer giftTypeID) {
+        String sql = "SELECT * FROM GiftType WHERE id = ?";
+
+        Connection connection = null;
+
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, giftTypeID);
+            GiftType giftType = null;
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                giftType = new GiftType(rs.getInt("id"), rs.getString("name"));
+            }
+
+            rs.close();
+            ps.close();
+            return giftType;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

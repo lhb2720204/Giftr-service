@@ -3,10 +3,13 @@ package com.akhahaha.shopzilla.catalog.models;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Product model
  * Created by Alan on 5/2/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Product {
     private String type;
     private Brand brand;
@@ -118,7 +121,14 @@ public class Product {
     }
 
     public Price getPrice() {
-        return price;
+    	if (price != null)
+    		return price;
+    	else {
+    		Price dummy = new Price();
+    		dummy.setValue("Check at orignal site");
+    		dummy.setIntegral(-1);
+    		return dummy;
+    	}
     }
 
     public void setPrice(Price price) {

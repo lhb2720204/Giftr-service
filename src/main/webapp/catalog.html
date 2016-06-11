@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <script src="/js/clearCookie.js"></script>
+    <script src="/js/jquery.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Giftr</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <script src="/js/prefixfree.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#btn1").click(function(){
+                $("#test1").text("Hello world!");
+            });
+        });
+    </script>
+  </head>
+
+  <body>
+    <div class="body"></div>
+
+        <nav class="navbar navbar">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">                     
+              </button>
+              <img src="/assets/giftrlogo.svg" width="100px" alt="">
+            </div>
+            </div>
+          </div>
+        </nav>
+        <div class="container text-center">    
+         <br>
+          <div class="row">
+          <div class="col-xs-1"></div>
+          <div class="col-sm-3">
+                <div class="profile-sidebar">
+                        <!-- SIDEBAR USERPIC -->
+						<div class="profile-userpic">
+							<img class="img-responsive" id ="profilepic" alt="">
+						</div>
+                        <!-- END SIDEBAR USERPIC -->
+                        <!-- SIDEBAR USER TITLE -->
+                        <div class="profile-usertitle">
+                            <div class="profile-usertitle-name">
+                                Welcome Back  <h1 id="welcome"></h1>
+                            </div>
+                        </div>
+                        <br>
+                        <hr>
+                        <div class="profile-usermenu">
+                            <ul class="nav">
+                                <li>
+                                    <a href="/match.html">
+                                    <img src="/assets/match_icon.svg" width="22px" alt="">
+                                     Find Match </a>
+                                </li>
+                                <li>
+                                    <a href="/about_me">
+                                    <img src="/assets/user_icon.svg" width="22px" alt="">
+                                     About Me </a>
+                                </li>
+                                <li>
+                                    <a href="/history.html">
+                                    <img src="/assets/gift_icon.svg" width="22px" alt="">
+                                     Gifts </a>
+                                </li>
+                                <li>
+                                    <a href="/unavailable.html" >
+                                    <img src="/assets/settings_icon.svg" width="22px" alt="">
+                                     Settings </a>
+                                </li>
+                                <li id = "sign_out">
+                                    <a onclick='deleteCookies()' href="/logout">
+                                    <img src="/assets/out_icon.svg" width="22px" alt="">
+                                     Sign Out </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- END MENU -->
+                </div>
+            </div>
+            <br>
+            <!--SearchBar-->
+            <div class="col-sm-7" > 
+            <form name="filter">
+              <div class="catalog-radio">
+                <input id="price-ascend" type="radio" name="field" value="option1">
+                <label for="price-ascend">Low to High <img src="/assets/stairsUp.svg" width="15px" alt=""> </label>
+
+                 <input id="price-descend" type="radio" name="field" value="option2">
+                <label for="price-descend">High to Low  <img src="/assets/stairsDown.svg" width="15px" alt=""> </label>
+
+                 <input id="price-relevance" type="radio" name="field" value="option3">
+                <label for="price-relevance">Relevance  <img src="/assets/target.svg" width="15px" alt=""> </label>
+                
+                    <input  type ="text" class="form-control min" placeholder="Min" name="min" onkeypress = "handle(event)" >
+                    <input  type ="text" class="form-control max" placeholder="Max" name="max" onkeypress = "handle(event)" >
+                </form>
+
+            </div>
+
+
+
+
+            <form name="search" onsubmit="handle(event)">
+                <div class="input-group">
+                    <span id="searchbar">
+                    <input type ="text" class="form-control search" placeholder="Search for..." name="keyword" onkeypress = "handle(event)" >
+                    </span>
+                     <span class = "input-group-btn">
+                            <button class="btn btn-default" id="btnSearch" type="button" onclick="searchCatalog()"></button>
+                    </span> 
+                </div>
+            </form>
+
+          
+
+
+            </div>
+             <div class="col-sm-3" > 
+       
+            </div>
+
+            <br><br><br><br>
+
+            <div class="col-sm-6" id="catalog-grid" > 
+                    <!--Catalog-->
+            </div>
+
+        </div>
+		
+    <script>
+	var xmlhttp = new XMLHttpRequest();
+	var url = "/users/me";
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			var data = JSON.parse(xmlhttp.responseText);
+			fillOutUserData(data);
+		}
+	};
+	xmlhttp.open("GET", url, true);
+	xmlhttp.send();
+
+	function fillOutUserData(data) {
+		document.getElementById("welcome").innerHTML = data.username;
+		var profilePic = document.getElementById("profilepic");
+		profilePic.src = "/image/" + data.username + ".jpg";
+		profilePic.onerror = function(){
+		   profilePic.src = "/assets/empty-profile.jpg";
+		};
+	}
+	</script>
+
+    <!--Dynamically create catalog entries-->
+    <script>
+
+    $('html').bind('keypress', function(e)
+        {
+           if(e.keyCode == 13)
+           {
+             // searchCatalog();
+             return false;
+           }
+        });
+
+        // document.getElementById('btnSearch').onkeypress = function(e){
+        //     if (!e) e = window.event;
+        //     var keyCode = e.keyCode || e.which;
+        //     if (keyCode == '13'){
+        //       searchCatalog();
+        //     }
+        //   }
+
+         function handle(e){
+
+            searchCatalog();
+        }
+
+        function killCatalog(){
+            var myNode = document.getElementById('catalog-grid');
+            var fc = myNode.firstChild;
+
+            while( fc ) {
+                myNode.removeChild( fc );
+                fc = myNode.firstChild;
+            }
+        }
+
+        function buildCatalog(data){
+            killCatalog();
+            for (var i = 0; i < data.length; i++){
+                var iDiv = document.createElement('div');
+                iDiv.className = 'col-lg-6 col-md-6 col-sm-6';
+                document.getElementById('catalog-grid').appendChild(iDiv);
+
+                // Now create and append to iDiv
+                var thumbnail = document.createElement('div');
+                thumbnail.className = 'thumbnail';
+                iDiv.appendChild(thumbnail);
+
+                var image = document.createElement('img');
+                image.src = data[i].images[2];
+                image.height = '120';
+                image.width = '120';
+                thumbnail.appendChild(image);
+
+                var caption = document.createElement('div');
+                caption.className = 'caption';
+
+                     var productBox = document.createElement('div');
+                     productBox.className = 'productBox';
+
+                            var productName = document.createElement('h5');
+                            productBox.appendChild(productName);
+
+                            var ref = document.createElement('a');
+                            ref.href = data[i].url;
+                            ref.innerHTML = data[i].title;
+                            productName.appendChild(ref);
+
+                    caption.appendChild(productBox);
+
+
+                    var price = document.createElement('h5');
+                  //  price.className = 'pull-right';
+                    var truePrice = data[i].price;
+                    truePrice = truePrice/100;
+                    var roundedPrice = parseInt(truePrice, 10);
+                    price.innerHTML = "$" + roundedPrice + ".00";
+                    caption.appendChild(price);
+
+                    var desc = document.createElement('div');
+                    desc.className = 'dropdown';
+                    caption.appendChild(desc);
+
+                    var descDropdown = document.createElement('div');
+                    descDropdown.className = 'dropdown-description';
+                    desc.appendChild(descDropdown);
+
+                     var descWell = document.createElement('div');
+                     descWell.className = 'well';
+                     descWell.innerHTML = data[i].description;
+                     descDropdown.appendChild(descWell);
+                    
+                    
+
+                thumbnail.appendChild(caption);
+            }
+        }
+    </script>
+
+    <!--Jquery -->
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+
+    <!--Search-->
+    <script type = "text/javascript">
+
+        function searchCatalog(){
+            if( document.search.keyword.value == "" ){
+                  return;
+            }
+            var searchTerm= escape(document.search.keyword.value); 
+            searchResults(searchTerm);
+        }
+
+        function searchResults(keyword){
+             var sort;
+             var max = document.filter.max.value;
+             var min = document.filter.min.value;
+             if(min=="")
+                min = 0;
+             else
+                min*=100;
+             if(max=="")
+                max = 10000000;
+            else
+                 max*=100;
+
+            if (document.getElementById("price-ascend").checked)
+                sort = "price-ascend";
+            else if (document.getElementById("price-descend").checked)
+                sort = "price-descend";
+            else
+                sort = null;
+
+
+
+            var xmlhttp = new XMLHttpRequest();
+             var url = "http://52.37.240.117:8080/products?keyword=" + keyword + "&sort=" + sort + "&maxPrice=" + max + "&minPrice=" + min;
+             // var url = "http://52.37.240.117:8080/products?keyword=ball&maxPrice=20000&start=10&numResults=20";
+           // var url = "http://localhost:8888/giftr/products/?keyword=" + keyword;
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    var data = JSON.parse(xmlhttp.responseText);
+                    buildCatalog(data);
+                }
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
+    </script>
+
+    <!--Parse Json-->
+    <script>
+            // var xmlhttp = new XMLHttpRequest();
+            // var url = "http://localhost:8888/giftr/browser/giftr/products.json";
+            // xmlhttp.onreadystatechange = function() {
+            //     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            //         var data = JSON.parse(xmlhttp.responseText);
+            //         buildCatalog(data);
+            //     }
+            // };
+            // xmlhttp.open("GET", url, true);
+            // xmlhttp.send();
+
+        
+
+    
+    </script>    
+    
+    
+  </body>
+</html>

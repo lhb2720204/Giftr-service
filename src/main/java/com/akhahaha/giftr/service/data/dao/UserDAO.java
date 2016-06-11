@@ -1,5 +1,6 @@
 package com.akhahaha.giftr.service.data.dao;
 
+import com.akhahaha.giftr.service.data.dao.queryBuilder.UserQueryBuilder;
 import com.akhahaha.giftr.service.data.models.Gender;
 import com.akhahaha.giftr.service.data.models.GiftType;
 import com.akhahaha.giftr.service.data.models.User;
@@ -29,8 +30,8 @@ public interface UserDAO extends DAO {
     User getUserByUsername(String username);
 
     User getDetailedUser(Integer userID);
-
-    List<User> getAllUsers();
+    
+    List<User> getUsersByAdvancedSearch(UserQueryBuilder userQueryBuilder);
 
     UserStatus getUserStatus(Integer userStatusID);
 

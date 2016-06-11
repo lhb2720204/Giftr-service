@@ -11,4 +11,12 @@ Giftr-service
 
 Summary
 ---------------
-Giftr REST service
+Giftr REST service  
+Giftr Browser Front End  
+
+To Build and Access
+---------------
+Within root directory:  
+1. mvn clean package  
+2. java -jar target/giftrservice-0.0.1-SNAPSHOT.jar  
+3. In browser, go to localhost:8080  

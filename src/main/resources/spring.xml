@@ -4,15 +4,15 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="url" value="${mysql.url}"/>
-		<property name="username" value="${mysql.user}"/>
-		<property name="password" value="${mysql.password}"/>
-	</bean>
+        <property name="url" value="jdbc:mysql://giftr.cbhlcja7j2ed.us-west-2.rds.amazonaws.com:3306/giftr"/>
+        <property name="username" value="developer"/>
+        <property name="password" value="giftrrocks"/>
+    </bean>
 
     <bean id="catalogClient" class="com.akhahaha.shopzilla.catalog.client.CatalogClientImpl">
-		<property name="publisherID" value="${catalog.pubID}"/>
-		<property name="apiKey" value="${catalog.apiKey}"/>
-	</bean>
+        <property name="publisherID" value="608865"/>
+        <property name="apiKey" value="f94ab04178d1dea0821d5816dfb8af8d"/>
+    </bean>
 
     <bean id="userDAO" class="com.akhahaha.giftr.service.data.dao.UserDAOImpl">
         <property name="dataSource" ref="dataSource"/>
@@ -22,7 +22,19 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="pendingMatchDAO" class="com.akhahaha.giftr.service.data.dao.PendingMatchDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <bean id="productDAO" class="com.akhahaha.giftr.service.data.dao.ProductDAOImpl">
         <property name="catalogClient" ref="catalogClient"/>
+    </bean>
+	
+    <bean id="authenticationDAO" class="com.akhahaha.giftr.service.data.dao.AuthenticationDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+	
+    <bean id="transactionDAO" class="com.akhahaha.giftr.service.data.dao.TransactionDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 </beans>

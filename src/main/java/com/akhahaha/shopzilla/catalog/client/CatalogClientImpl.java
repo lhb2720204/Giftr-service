@@ -1,5 +1,6 @@
 package com.akhahaha.shopzilla.catalog.client;
 
+import com.akhahaha.giftr.service.data.dao.queryBuilder.ProductQueryBuilder;
 import com.akhahaha.shopzilla.catalog.models.Product;
 import com.akhahaha.shopzilla.catalog.models.response.ProductResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,13 +55,13 @@ public class CatalogClientImpl implements CatalogClient {
     }
 
     @Override
-    public List<Product> searchProductsByKeyword(String keyword) {
+    public List<Product> searchProductsByAdvancedSearch(ProductQueryBuilder productQueryBuilder) {
         try {
             HttpResponse<ProductResponse> productHttpResponse = Unirest.get(BASE_URL + "{endpoint}")
                     .routeParam("endpoint", "product")
                     .queryString("apiKey", apiKey).queryString("publisherId", publisherID)
                     .queryString("format", "json")
-                    .queryString("keyword", keyword)
+                    .queryString(productQueryBuilder.buildParamMap())
                     .asObject(ProductResponse.class);
             return productHttpResponse.getBody().getProductResult().getProducts();
         } catch (UnirestException e) {

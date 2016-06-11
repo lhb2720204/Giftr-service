@@ -1,9 +1,10 @@
 package com.akhahaha.giftr.service.data.dao;
 
+import java.util.List;
+
+import com.akhahaha.giftr.service.data.models.GiftType;
 import com.akhahaha.giftr.service.data.models.Match;
 import com.akhahaha.giftr.service.data.models.MatchStatus;
-
-import java.util.List;
 
 /**
  * Match DAO interface
@@ -37,4 +38,6 @@ public interface MatchDAO extends DAO {
     List<Match> findMatchesByUserPair(Integer userID1, Integer userID2);
 
     MatchStatus getMatchStatus(Integer matchStatusID);
+    
+    GiftType getGiftType(Integer giftTypeID);
 }

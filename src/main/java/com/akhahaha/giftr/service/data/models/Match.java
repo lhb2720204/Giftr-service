@@ -17,8 +17,9 @@ public class Match {
     private Integer user2ID;
     private Integer user1Transaction;
     private Integer user2Transaction;
+    private GiftType giftType;
 
-    public Match() {
+	public Match() {
     }
 
     public Match(Integer user1ID, Integer user2ID) {
@@ -30,10 +31,11 @@ public class Match {
         this.user2ID = user2ID;
         this.priceMin = 0;
         this.priceMax = 0;
+        this.giftType = GiftType.UNKNOWN;
     }
 
     public Match(Integer id, MatchStatus status, Date created, Date lastModified, Integer priceMin, Integer priceMax,
-                 Integer user1ID, Integer user2ID, Integer user1Transaction, Integer user2Transaction) {
+                 Integer user1ID, Integer user2ID, Integer user1Transaction, Integer user2Transaction, GiftType giftType) {
         this.id = id;
         this.status = status;
         this.created = created;
@@ -44,6 +46,7 @@ public class Match {
         this.user2ID = user2ID;
         this.user1Transaction = user1Transaction;
         this.user2Transaction = user2Transaction;
+        this.giftType = giftType;
     }
 
     public Integer getId() {
@@ -125,4 +128,14 @@ public class Match {
     public void setUser2Transaction(Integer user2Transaction) {
         this.user2Transaction = user2Transaction;
     }
+    
+    public GiftType getGiftType() {
+		return giftType;
+	}
+
+	public void setGiftType(GiftType giftType) {
+		this.giftType = giftType;
+	}
+
+
 }

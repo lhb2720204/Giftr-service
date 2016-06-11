@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html >
+  <head>
+      <script src="/js/clearCookie.js"></script>
+    <script src="/js/jquery.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap-datepicker.js"></script>
+    <link href="/css/datepicker.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Giftr</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <script src="/js/prefixfree.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function(){
+        $("#btn1").click(function(){
+            $("#test1").text("Hello world!");
+        });
+    });
+  </script>
+
+  </head>
+
+  <body>
+    <div class="body"></div>
+
+      <nav class="navbar navbar">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">                     
+          </button>
+          <img src="/assets/giftrlogo.svg" width="100px" alt="">
+        </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container text-center">    
+     <br>
+      <div class="row">
+      <div class="col-xs-1"></div>
+      <div class="col-sm-3">
+        <div class="profile-sidebar">
+            <!-- SIDEBAR USERPIC -->
+            <div class="profile-userpic">
+              <img src="/assets/profile.png" class="img-responsive" alt="">
+            </div>
+            <!-- END SIDEBAR USERPIC -->
+            <!-- SIDEBAR USER TITLE -->
+            <div class="profile-usertitle">
+              <div class="profile-usertitle-name">
+                Welcome Back  <h1>Nathan Sun</h1>
+              </div>
+            </div>
+            <br>
+            <hr>
+            <div class="profile-usermenu">
+              <ul class="nav">
+                <li>
+                  <a href="/match.html">
+                  <img src="/assets/match_icon.svg" width="22px" alt="">
+                   Find Match </a>
+                </li>
+                <li>
+                  <a href="/about_me">
+                  <img src="/assets/user_icon.svg" width="22px" alt="">
+                   About Me </a>
+                </li>
+                <li>
+                  <a href="/history.html">
+                  <img src="/assets/gift_icon.svg" width="22px" alt="">
+                   Gifts </a>
+                </li>
+                <li>
+                  <a href="/unavailable.html" >
+                  <img src="/assets/settings_icon.svg" width="22px" alt="">
+                   Settings </a>
+                </li>
+                <li id = "sign_out">
+                  <a onclick='deleteCookies()' href="/logout">
+                  <img src="/assets/out_icon.svg" width="22px" alt="">
+                   Sign Out </a>
+                </li>
+              </ul>
+            </div>
+            <!-- END MENU -->
+        </div>
+        </div>
+
+        <div class="col-sm-6"> 
+
+
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#home" data-toggle="tab">Profile</a></li>
+            <li><a href="#profile" data-toggle="tab">Password</a></li>
+          </ul>
+          <br>
+          <!-- <div id="myTabContent" class="tab-content"> -->
+            <div class="tab-pane active in" id="home">
+              <form id="tab">
+                <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon1">New Username</span>
+                  <input type="text" class="form-control" placeholder="Original Username" aria-describedby="basic-addon1">
+                </div>
+                <br>
+                <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon1">New E-mail Address</span>
+                  <input type="text" class="form-control" placeholder="Original E-mail Address" aria-describedby="basic-addon2">
+                </div>
+                <br>
+                <select class="selectpicker show-tick pull-left">
+                  <!-- <optgroup label="Gender"> -->
+                    <option>Male</option>
+                    <option>Female</option>
+                </select>
+                <br>
+                <br>
+                <br>
+                <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon1"></span>
+                  <input type="text" class="form-control" placeholder="E-mail Address" aria-describedby="basic-addon2">
+                </div>
+                <br>
+                <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon1"></span>
+                  <input type="text" class="form-control" placeholder="E-mail Address" aria-describedby="basic-addon2">
+                </div>
+                <br>
+                <button class="btn btn-primary ">Update</button>
+              </form>
+          </div>
+            <div class="tab-pane fade" id="profile">
+            <form id="tab2">
+                <label>New Password</label>
+            </form>
+            </div>
+          <!-- </div> -->
+
+
+    </div>
+
+
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    
+    <script>
+	var xmlhttp = new XMLHttpRequest();
+	var url = "/users/me";
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			var data = JSON.parse(xmlhttp.responseText);
+			fillOutUserData(data);
+		}
+	};
+	xmlhttp.open("GET", url, true);
+	xmlhttp.send();
+
+	function fillOutUserData(data) {
+		document.getElementById("welcome").innerHTML = data.username;
+		var profilePic = document.getElementById("profilepic");
+		profilePic.src = "/image/" + data.username + ".jpg";
+		profilePic.onerror = function(){
+		   profilePic.src = "/assets/empty-profile.jpg";
+		};
+	}
+	</script>
+
+	</script>
+    var myIndex = 0;
+    carousel();
+
+    function carousel() {
+        var i;
+         var y = document.getElementsByClassName("giftSlides");
+
+         for (i = 0; i < y.length; i++) {
+           y[i].style.display = "none";  
+        }
+        myIndex++;
+
+       if (myIndex > y.length) {myIndex = 1}    
+        y[myIndex-1].style.display = "block";  
+        setTimeout(carousel, 150); // Change image every 2 seconds
+    }
+  </script>
+    
+  </body>
+</html>
